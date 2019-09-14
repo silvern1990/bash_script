@@ -1,8 +1,18 @@
 #!/bin/bash
 
+if [ -x /usr/bin/vim ]; then
+    echo "vim exist."
+else
+    if [ -x /usr/bin/apt ]; then
+	sudo apt-get install vim
+    elif [ -x /usr/bin/yum ]; then
+	sudo yum -y install vim
+    fi
+fi
+
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 
-cat >> ~/.vimrc << EOF
+cat > ~/.vimrc << EOF
 
 set nocompatible
 filetype off
@@ -61,4 +71,3 @@ map <Leader>n  <ESC>:NERDTreeToggle<CR>
 EOF
 
 vim -c PluginInstall
-
