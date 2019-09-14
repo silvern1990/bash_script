@@ -40,7 +40,7 @@ conky.config = {
     no_buffers = true,
     uppercase = false,
     cpu_avg_samples = 2,
-    override_utf8_locale = false,
+    override_utf8_locale = true,
     uppercase = true,
 }
 
@@ -80,7 +80,7 @@ ${swapbar 10}
 
 ${alignc}${font Sans:bold:size=12}- ${exec nvidia-smi --query-gpu=gpu_name --format=csv,noheader,nounits} -${font Sans:size=9}
 
-GPU ${nvidia gpuutil}%  ${alignr} ${nvidia gpufreqcur} MHz
+GPU ${nvidia gpuutil}%  ${alignr} ${nvidia gpufreqcur} MHz(${nvidia gputemp}°C)
 ${nvidiabar 10 gpuutil}
 MEM ${alignr} ${nvidia memused} MB / ${nvidia memmax} MB
 ${nvidiabar 10 memused}
