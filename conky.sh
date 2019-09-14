@@ -2,9 +2,9 @@ if [ -x /usr/bin/conky ]; then
     echo "/usr/bin/conky"
 else
     if [ -x /usr/bin/apt ]; then
-	sudo apt-get install conky
+	sudo apt-get install conky-all
     elif [ -x /usr/bin/yum ]; then
-	sudo yum -y install conky
+	sudo yum -y install conky-all
     fi
 fi
 
@@ -46,13 +46,15 @@ conky.config = {
 
 conky.text = [[
 ${color2}
-Datetime: ${time %Y.%m.%d %H:%M}
+${alignr} ${time %Y.%m.%d %H:%M}
+${alignr} kernel ${kernel}
 
 #Sytem temp: ${alignr}${acpitemp}${iconv_start UTF-8 ISO_8859-1}°${iconv_stop}C
 #CPU temp: ${alignr}${hwmon 2 temp 1}${iconv_start UTF-8 ISO_8859-1}°${iconv_stop}C
 #Fan: ${alignr}${hwmon 1 fan 1} RPM
+${alignc}${font Sans:bold:size=12}- ${execi 1000 cat /proc/cpuinfo | grep 'model name' | sed -e 's/model name.*: //'| uniq | cut -c 1-17} -${font Sans:size=9}
 
-CPU ${cpu}%
+CPU ${cpu cpu0}% ${alignr} 
 ${cpubar 20}
 Core0 ${cpu cpu1}% ${alignr} Core8 ${cpu cpu9}%
 ${cpubar cpu1 10,180} ${alignr} ${cpubar cpu9 10,180}
@@ -76,20 +78,29 @@ ${membar 10}
 swap ${alignr}$swap / $swapmax ($swapperc%)
 ${swapbar 10}
 
-Highest CPU $alignr CPU% MEM%
-${color1}${top name 1}$alignr${top cpu 1}${top mem 1}${color2}
-${top name 2}$alignr${top cpu 2}${top mem 2}
+${alignc}${font Sans:bold:size=12}- ${exec nvidia-smi --query-gpu=gpu_name --format=csv,noheader,nounits} -${font Sans:size=9}
 
-Highest MEM $alignr CPU% MEM%
-${color1}${top_mem name 1}$alignr${top_mem cpu 1}${top_mem mem 1}${color2}
-${top_mem name 2}$alignr${top_mem cpu 2}${top_mem mem 2}
+GPU ${nvidia gpuutil}%  ${alignr} ${nvidia gpufreqcur}MHz
+${nvidiabar 10 gpuutil}
+MEM ${alignr} ${nvidia memused} MB / ${nvidia memmax} MB
+${nvidiabar 10 memused}
+
+Highest CPU $alignr PID   CPU MEM
+${color1}${top name 1}$alignr${top pid 1}${top cpu 1}${top mem 1}${color2}
+${top name 2}$alignr${top pid 2}${top cpu 2}${top mem 2}
+${top name 3}$alignr${top pid 3}${top cpu 3}${top mem 3}
+${top name 4}$alignr${top pid 4}${top cpu 4}${top mem 4}
+
+#Highest MEM $alignr CPU% MEM%
+#${color1}
+#${top_mem name 1}$alignr${top_mem cpu 1}${top_mem mem 1}
+#${color2}
+#${top_mem name 2}$alignr${top_mem cpu 2}${top_mem mem 2}
 
 SSD: ${alignr}${fs_used /} / ${fs_size /}
 ${fs_bar 10 /}
 IO-R: ${diskio_read /dev/sda} ${alignr}IO-W: ${diskio_write}
 ${diskiograph_read /dev/sda 15,107} ${alignr}${diskiograph_write /dev/sda 15,107}
-TMP: ${alignr}${fs_used /tmp} / ${fs_size /tmp}
-${fs_bar 10 /tmp}
 
 ENP4S0: ${addr enp4s0}
 Signal: ${alignr}${wireless_link_qual enp4s0}%
