@@ -8,7 +8,7 @@ else
     fi
 fi
 
-cat > ~/.conkyrc << EOF
+cat > ~/.conkyrc << "EOF"
 conky.config = {
     background = yes,
     font = 'Sans:size=9',
@@ -99,8 +99,13 @@ Total ${totaldown enp4s0} ${alignr}Total ${totalup enp4s0}
 ]]
 EOF
 
+if [ -d ~/.config/autostart ]; then
+    echo ""
+else
+    mkdir -p ~/.config/autostart
+fi
 
-cat > ~/.config/autostart/sh.desktop << EOF
+cat > ~/.config/autostart/sh.desktop << "EOF"
 [Desktop Entry]
 Type=Application
 Exec=sh -c "sleep 10; exec conky"
