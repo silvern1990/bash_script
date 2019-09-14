@@ -80,7 +80,7 @@ ${swapbar 10}
 
 ${alignc}${font Sans:bold:size=12}- ${exec nvidia-smi --query-gpu=gpu_name --format=csv,noheader,nounits} -${font Sans:size=9}
 
-GPU ${nvidia gpuutil}%  ${alignr} ${nvidia gpufreqcur}MHz
+GPU ${nvidia gpuutil}%  ${alignr} ${nvidia gpufreqcur} MHz
 ${nvidiabar 10 gpuutil}
 MEM ${alignr} ${nvidia memused} MB / ${nvidia memmax} MB
 ${nvidiabar 10 memused}
