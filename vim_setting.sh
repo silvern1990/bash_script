@@ -1,12 +1,22 @@
 #!/bin/bash
 
 if [ -x /usr/bin/vim ]; then
-    echo "vim exist."
+    :
 else
     if [ -x /usr/bin/apt ]; then
 	sudo apt-get install vim
     elif [ -x /usr/bin/yum ]; then
 	sudo yum -y install vim
+    fi
+fi
+
+if [ -x /usr/bin/ctags ]; then
+    :
+else
+    if [ -x /usr/bin/apt ]; then
+	sudo apt-get install ctags
+    elif [ -x /usr/bin/yum ]; then
+	sudo yum -y install ctags
     fi
 fi
 
@@ -35,6 +45,8 @@ Plugin 'baines/vim-colorscheme-thaumaturge' "color
 
 Plugin 'morhetz/gruvbox' "color
 
+Plugin 'taglist-plus'
+
 call vundle#end()
 
 filetype plugin indent on
@@ -43,6 +55,17 @@ let g:ctrlp_custom_ignore = {
             \ 'dir': '\.git$\|public$\|log$\|tmp$\|vendor$',
             \ 'file': '\v\.(exe|so|dll)$'
             \ }
+
+let Tlist_Ctags_Cmd = "/usr/bin/ctags"
+
+let Tlist_Inc_Winwidth = 0
+
+let Tlist_Exit_OnlyWindow = 0
+
+let Tlist_Auto_Open = 0
+
+let Tlist_Use_Right_Window = 1
+
 
 
 set ic
@@ -66,8 +89,8 @@ syntax on
 color gruvbox
 set background=dark
 
-map <Leader>nt <ESC>:NERDTree<CR>
-map <Leader>n  <ESC>:NERDTreeToggle<CR>
+map <Leader>t  <ESC>:NERDTreeToggle<CR>
+map <Leader>c <ESC>:TlistToggle<CR>
 EOF
 
 vim -c PluginInstall
