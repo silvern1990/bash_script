@@ -76,6 +76,7 @@ set formatoptions=croql
 set ruler
 set showmode
 set smartindent
+set splitright "locate new vsplit window at right panel
 
 "this makes backspace key work properly in gvim on Windows
 "set backspace=2
@@ -89,8 +90,8 @@ syntax on
 color gruvbox
 set background=dark
 
-map <Leader>t  <ESC>:NERDTreeToggle<CR>
-map <Leader>c <ESC>:TlistToggle<CR>
+map ;t  <ESC>:NERDTreeToggle<CR>
+map ;c <ESC>:TlistToggle<CR>
 EOF
 
 vim -c PluginInstall
