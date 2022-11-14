@@ -90,8 +90,8 @@ syntax on
 color gruvbox
 set background=dark
 
-map ;t  <ESC>:NERDTreeToggle<CR>
-map ;c <ESC>:TlistToggle<CR>
+map ;n  <ESC>:NERDTreeToggle<CR>
+map ;t <ESC>:TlistToggle<CR>
 EOF
 
 vim -c PluginInstall
