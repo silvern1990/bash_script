@@ -17,6 +17,8 @@ else
 	sudo apt-get install ctags
     elif [ -x /usr/bin/yum ]; then
 	sudo yum -y install ctags
+    elif [ -x /usr/bin/pacman ]; then
+	sudo pacman -S ctags
     fi
 fi
 
