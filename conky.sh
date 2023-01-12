@@ -12,14 +12,16 @@ cat > ~/.conkyrc << "EOF"
 conky.config = {
     background = yes,
     font = 'Sans:size=9',
+    alignment = 'middle_left',
     use_xft = true,
     xftalpha = 0.9,
     update_interval = 1.2,
     total_run_times = 0,
     own_window = true,
-    own_window_type = 'panel',
+    own_window_type = 'desktop',
+    own_window_transparent = false,
     own_window_argb_visual = true,
-    own_window_transparent = true,
+    own_window_argb_value = 80,
     own_window_class = 'conky',
     own_window_hints = 'undecorated,above,sticky,skip_taskbar,skip_pager',
     double_buffer = true,
@@ -31,12 +33,11 @@ conky.config = {
     draw_graph_borders = true,
     default_color = 'CDE0E7',
     color1 = 'ff0000',
-    color2 = 'a7faeb',
+    color2 = 'eeeeee',
     default_shade_color = 'black',
     default_outline_color = 'green',
     gap_x = 10,
     gap_y = 0,
-    alignment = 'mr',
     no_buffers = true,
     uppercase = false,
     cpu_avg_samples = 2,
@@ -54,7 +55,7 @@ ${alignr} kernel ${kernel}
 #Fan: ${alignr}${hwmon 1 fan 1} RPM
 ${alignc}${font Sans:bold:size=12}- ${execi 1000 cat /proc/cpuinfo | grep 'model name' | sed -e 's/model name.*: //'| uniq | cut -c 1-17} -${font Sans:size=9}
 
-CPU ${cpu cpu0}% ${alignr} 
+CPU ${cpu cpu0}% ${alignr}
 ${cpubar 20}
 Core0 ${cpu cpu1}% ${alignr} Core8 ${cpu cpu9}%
 ${cpubar cpu1 10,180} ${alignr} ${cpubar cpu9 10,180}
@@ -80,7 +81,7 @@ ${swapbar 10}
 
 ${alignc}${font Sans:bold:size=12}- ${exec nvidia-smi --query-gpu=gpu_name --format=csv,noheader,nounits} -${font Sans:size=9}
 
-GPU ${nvidia gpuutil}%  ${alignr} ${nvidia gpufreqcur} MHz(${nvidia gputemp}°C)
+GPU ${nvidia gpuutil}%  ${alignr} ${nvidia gpufreqcur} MHz(${nvidia temp}°C)
 ${nvidiabar 10 gpuutil}
 MEM ${alignr} ${nvidia memused} MB / ${nvidia memmax} MB
 ${nvidiabar 10 memused}
