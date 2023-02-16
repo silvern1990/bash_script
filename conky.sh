@@ -10,6 +10,7 @@ fi
 
 cat > ~/.conkyrc << "EOF"
 conky.config = {
+    xinerama_head = 0,
     background = yes,
     font = 'Sans:size=9',
     use_xft = true,
