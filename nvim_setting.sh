@@ -54,6 +54,7 @@ set ruler
 set showmode
 set smartindent
 set splitright "locate new vsplit window at right panel
+set clipboard+=unnamedplus
 
 "this makes backspace key work properly in gvim on Windows
 "set backspace=2
