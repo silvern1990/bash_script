@@ -31,6 +31,8 @@ if [ -d ~/.config/nvim ]; then
 else
     mkdir -p ~/.config/nvim
 
+fi
+
 cat > ~/.config/nvim/init.vim << "EOF"
 
 
