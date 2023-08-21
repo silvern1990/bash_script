@@ -1,137 +1,221 @@
 #!/bin/bash
 
-if [ -x /usr/bin/vim ]; then
+if [ -x /usr/bin/nvim ] || [ -x /snap/bin/nvim ]; then
     :
 else
     if [ -x /usr/bin/apt ]; then
-	sudo apt-get install nvim
+		sudo apt install nvim
+	elif [ -x /usr/bin/dnf ]; then
+		sudo dnf install ripgrep
     elif [ -x /usr/bin/yum ]; then
-	sudo yum -y install nvim
+		sudo yum -y install nvim
     fi
 fi
 
-if [ -x /usr/bin/ctags ]; then
-    :
+if [ -x /usr/bin/ripgrep ]; then
+	:
 else
-    if [ -x /usr/bin/apt ]; then
-	sudo apt-get install ctags
-    elif [ -x /usr/bin/yum ]; then
-	sudo yum -y install ctags
-    elif [ -x /usr/bin/pacman ]; then
-	sudo pacman -S ctags
-    fi
+	if [ -x /usr/bin/apt ]; then
+		sudo apt install ripgrep
+	elif [ -x /usr/bin/dnf ]; then
+		sudo dnf install ripgrep
+	elif [ -x /usr/bin/yum ]; then
+		sudo yum -y install ripgrep
+	fi
 fi
 
-sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
-       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+
+sh -c 'curl -fLo /tmp/nerd_font.zip \
+       https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/Cousine.zip && unzip -d ~/.local/share/fonts/ nerd_font.zip'
 
 
-if [ -d ~/.config/nvim ]; then
-    :
-else
-    mkdir -p ~/.config/nvim
+mv ~/.config/nvim ~/.config/nvim.bak
 
-fi
+mv ~/.local/share/nvim ~/.local/share/nvim.bak
+mv ~/.local/state/nvim ~/.local/state/nvim.bak
+mv ~/.cache/nvim ~/.cache/nvim.bak
 
-cat > ~/.config/nvim/init.vim << "EOF"
+git clone --depth 1 https://github.com/AstroNvim/AstroNvim ~/.config/nvim
 
-set ic
-set nu
-set softtabstop=4
-set shiftwidth=4
-set formatoptions=croql
-set ruler
-set showmode
-set smartindent
-set splitright "locate new vsplit window at right panel
+mkdir -p ~/.config/nvim/lua/user
 
-"this makes backspace key work properly in gvim on Windows
-"set backspace=2
+cat > ~/.config/nvim/lua/user/init.lua << "EOF"
 
-"this makes Copy&Past(Ctrl + C, Ctrl + V) shortcut work properly on Windows
-"set guioptions+=a
-"set guifont=Fixedsys:h12
+vim.api.nvim_create_autocmd("Filetype", {
+  pattern = "python,java",
+  callback = function()
+    require("todo-comments").setup()
+  end,
+})
 
-syntax on
+-- for java debugging 
+-- have to call function that finds main class after require"jdtls" is completed
+-- to do that, insert code require("jdtls.dap").setup_dap_main_class_configs()
+-- into nvim-jdtls/lua/jdtls/setup.lua
+-- like below example.
+--
+-- config.name = 'jdtls'
+-- local on_attach = config.on_attach
+-- config.on_attach = function(client, bufnr)
+--   if on_attach then
+--     on_attach(client, bufnr)
+--     require("jdtls.dap").setup_dap_main_class_configs()
+--   end
+--   add_commands(client, bufnr, opts)
+-- end
 
-set background=dark
+return {
+  lsp = {
 
-call plug#begin('~/.vim/plugged')
-
-Plug 'morhetz/gruvbox' "color
-Plug 'baines/vim-colorscheme-thaumaturge' "color
-Plug 'preservim/nerdtree' 
-Plug 'vim-airline/vim-airline'
-
-" -- python plugin start --
-Plug 'Shougo/ddc.vim'
-Plug 'vim-denops/denops.vim'
-Plug 'Shougo/ddc-matcher_head'
-Plug 'Shougo/ddc-sorter_rank'
-Plug 'Shougo/ddc-ui-native'
-Plug 'Shougo/ddc-source-around'
-" -- python plugin end --
-
-call plug#end()
-
-
-" Customize global settings
-
-" You must set the default ui.
-" NOTE: native ui
-" https://github.com/Shougo/ddc-ui-native
-call ddc#custom#patch_global('ui', 'native')
-
-" Use around source.
-" https://github.com/Shougo/ddc-source-around
-call ddc#custom#patch_global('sources', ['around'])
-
-" Use matcher_head and sorter_rank.
-" https://github.com/Shougo/ddc-matcher_head
-" https://github.com/Shougo/ddc-sorter_rank
-call ddc#custom#patch_global('sourceOptions', #{
-      \ _: #{
-      \   matchers: ['matcher_head'],
-      \   sorters: ['sorter_rank']},
-      \ })
-
-" Change source options
-call ddc#custom#patch_global('sourceOptions', #{
-      \   around: #{ mark: 'A' },
-      \ })
-call ddc#custom#patch_global('sourceParams', #{
-      \   around: #{ maxSize: 500 },
-      \ })
-
-" Customize settings on a filetype
-call ddc#custom#patch_filetype(['c', 'cpp'], 'sources',
-      \ ['around', 'clangd'])
-call ddc#custom#patch_filetype(['c', 'cpp'], 'sourceOptions', #{
-      \   clangd: #{ mark: 'C' },
-      \ })
-call ddc#custom#patch_filetype('markdown', 'sourceParams', #{
-      \   around: #{ maxSize: 100 },
-      \ })
-
-" Mappings
-
-" <TAB>: completion.
-inoremap <silent><expr> <TAB>
-\ pumvisible() ? '<C-n>' :
-\ (col('.') <= 1 <Bar><Bar> getline('.')[col('.') - 2] =~# '\s') ?
-\ '<TAB>' : ddc#map#manual_complete()
-
-" <S-TAB>: completion back.
-inoremap <expr><S-TAB>  pumvisible() ? '<C-p>' : '<C-h>'
-
-" Use ddc.
-call ddc#enable()
+    setup_handlers = {
+      -- add custom handler
+      jdtls = function(_, opts)
+        vim.api.nvim_create_autocmd("Filetype", {
+          pattern = "java", -- autocmd to start jdtls
+          callback = function()
+            if opts.root_dir and opts.root_dir ~= ""
+            then 
+              require("jdtls").start_or_attach(opts)
+            end
+          end,
+        })
+      end
+    },
+    config = {
+      -- set jdtls server settings
+      jdtls = function()
+        -- use this function notation to build some variables
+        local root_markers = { ".git", "mvnw", "gradlew", "pom.xml", "build.gradle" }
+        local root_dir = require("jdtls.setup").find_root(root_markers)
 
 
-" key map
+        -- calculate workspace dir
+        local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
+        local workspace_dir = vim.fn.stdpath "data" .. "/site/java/workspace-root/" .. project_name
+        os.execute("mkdir " .. workspace_dir)
 
-map <leader>t <ESC>:NERDTreeToggle<CR>
+        -- get the mason install path
+        local install_path = require("mason-registry").get_package("jdtls"):get_install_path()
 
+        -- get the current OS
+        local os
+        if vim.fn.has "macunix" then
+          os = "mac"
+        elseif vim.fn.has "win32" then
+          os = "win"
+        else
+          os = "linux"
+        end
+
+
+        local bundles = {
+          vim.fn.glob(
+            "/Users/zero/.local/share/java-debug/com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar",
+            1),
+        }
+        vim.list_extend(bundles,
+          vim.split(vim.fn.glob("/Users/zero/.local/share/vscode-java-test/server/*.jar", 1), "\n"))
+
+        -- return the server config
+        return {
+          cmd = {
+            "java",
+            "-Declipse.application=org.eclipse.jdt.ls.core.id1",
+            "-Dosgi.bundles.defaultStartLevel=4",
+            "-Declipse.product=org.eclipse.jdt.ls.core.product",
+            "-Dlog.protocol=true",
+            "-Dlog.level=ALL",
+            "-javaagent:" .. install_path .. "/lombok.jar",
+            "-Xms1g",
+            "--add-modules=ALL-SYSTEM",
+            "--add-opens",
+            "java.base/java.util=ALL-UNNAMED",
+            "--add-opens",
+            "java.base/java.lang=ALL-UNNAMED",
+            "-jar",
+            vim.fn.glob(install_path .. "/plugins/org.eclipse.equinox.launcher_*.jar"),
+            "-configuration",
+            install_path .. "/config_" .. os,
+            "-data",
+            workspace_dir,
+          },
+          root_dir = root_dir,
+          init_options = {
+            bundles = bundles
+          },
+        }
+      end,
+    },
+    mappings = {
+      n = {
+        ["<leader>ji"] = { function() require'jdtls'.organize_imports() end, desc = "organize_imports" },
+        ["<leader>jda"] = { function() require'jdtls'.test_class({after_test=function() require'dapui'.toggle() end}) end, desc = "test class" },
+        ["<leader>jdc"] = { function() require'jdtls'.test_nearest_method({after_test=function() require'dapui'.toggle() end}) end, desc = "test method" },
+        ["<leader>ja"] = { function() vim.lsp.buf.code_action() end, desc = "Code Action"},
+        ["<leader>Tn"] = { function() require'todo-comments'.jump_next() end, desc = "next-TODO comment" },
+        ["<leader>fT"] = { function() vim.cmd('TodoTelescope') end, desc = "Telescope TODO" },
+        ["<leader>dV"] = { function() require'dapui'.float_element('console', {width=100, height=100, enter=true}) end, desc = "float console window" },
+        ["<leader>dR"] = { function() require("dap").repl.toggle({height=15}) end, desc = "Toggle REPL" }
+      },
+    }
+  },
+  plugins = {
+    "mfussenegger/nvim-jdtls", -- load jdtls on module
+    {
+      "williamboman/mason-lspconfig.nvim",
+      opts = {
+        ensure_installed = { "jdtls" },
+      },
+    },
+    {
+      "folke/todo-comments.nvim",
+      dependencies = { "nvim-lua/plenary.nvim" },
+    },
+    {
+      "rcarriga/nvim-dap-ui",
+      config = {
+        layouts = {
+          {
+            elements = {
+              {
+                id = "scopes",
+                size = 0.2
+              },
+              {
+                id = "breakpoints",
+                size = 0.2
+              },
+              {
+                id = "stacks",
+                size = 0.2
+              },
+              {
+                id = "watches",
+                size = 0.2
+              },
+              {
+                id = "repl",
+                size = 0.2
+              }
+            },
+            position = "left",
+            size = 30
+          },
+          {
+            elements = {
+              {
+                id = "console",
+                size = 1
+              },
+            },
+            position = "bottom",
+            size = 10
+          }
+        }
+      },
+    }
+  },
+}
 EOF
 
-nvim -c PlugInstall
+nvim
