@@ -26,7 +26,7 @@ fi
 
 
 sh -c 'curl -fLo /tmp/nerd_font.zip \
-       https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/Cousine.zip && unzip -d ~/.local/share/fonts/ nerd_font.zip'
+       https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/RobotoMono.zip && unzip -d ~/.local/share/fonts/ nerd_font.zip'
 
 
 mv ~/.config/nvim ~/.config/nvim.bak
