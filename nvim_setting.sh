@@ -37,3 +37,5 @@ mkdir -p ~/.config/nvim/lua/user
 
 git clone https://github.com/silvern1990/astronvim_for_spring ~/.config/nvim/lua/user
 
+cd ~/.config/nvim/lua/user
+git pull origin mine
