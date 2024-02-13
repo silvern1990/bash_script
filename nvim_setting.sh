@@ -37,3 +37,19 @@ mkdir -p ~/.config/nvim/lua/user
 
 git clone https://github.com/silvern1990/astronvim_for_spring ~/.config/nvim/lua/user
 
+git clone https://github.com/microsoft/java-debug ~/.local/share/nvim/java-debug
+
+cd ~/.local/share/nvim/java-debug
+
+./mvnw clean install
+
+git clone https://github.com/microsoft/vscode-java-test ~/.local/share/nvim/vscode-java-test
+
+cd ~/.local/share/nvim/vscode-java-test
+
+npm install
+
+npm run build-plugin
+
+
+
