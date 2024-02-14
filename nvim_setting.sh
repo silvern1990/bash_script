@@ -46,9 +46,9 @@ cd ~/.local/share/nvim/java-debug
 
 ./mvnw clean install
 
-git clone https://github.com/microsoft/vscode-java-test ~/.local/share/nvim/vscode-java-test
+git clone https://github.com/microsoft/vscode-java-test ~/.local/share/nvim/java-debug/vscode-java-test
 
-cd ~/.local/share/nvim/vscode-java-test
+cd ~/.local/share/nvim/java-debug/vscode-java-test
 
 npm install
 
