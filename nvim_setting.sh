@@ -57,11 +57,7 @@ mv ~/.local/share/nvim ~/.local/share/nvim.bak
 mv ~/.local/state/nvim ~/.local/state/nvim.bak
 mv ~/.cache/nvim ~/.cache/nvim.bak
 
-git clone --depth 1 --branch v3.45.3 https://github.com/AstroNvim/AstroNvim ~/.config/nvim
-
-mkdir -p ~/.config/nvim/lua/user
-
-git clone https://github.com/silvern1990/astronvim_for_spring ~/.config/nvim/lua/user
+git clone https://github.com/silvern1990/astronvim_for_spring ~/.config/nvim
 
 cd ~/.config/nvim/lua/user
 git pull origin mine
