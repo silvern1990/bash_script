@@ -1,13 +1,13 @@
 #!/bin/sh
 
-cursorup(){
+cursoron(){
     # 커서 표시
     echo "\033[?25h"
     exit 1
 }
 
 
-trap cursorup SIGINT
+trap cursoron SIGINT
 
 # 커서 숨김
 echo "\033[?25l"
