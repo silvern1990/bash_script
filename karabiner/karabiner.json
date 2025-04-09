@@ -570,7 +570,7 @@
                                     "key_code": "tab",
                                     "modifiers": { "mandatory": ["left_control"] }
                                 },
-                                "to": [
+                                "to_after_key_up": [
                                     {
                                         "key_code": "tab",
                                         "modifiers": ["left_command"]
