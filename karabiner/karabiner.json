@@ -605,7 +605,7 @@
                                     "key_code": "tab",
                                     "modifiers": { "mandatory": ["left_control"] }
                                 },
-                                "to_after_key_up": [
+                                "to_if_alone": [
                                     {
                                         "key_code": "tab",
                                         "modifiers": ["left_command"]
@@ -710,8 +710,6 @@
                             }
                         ]
                     },
-
-                    
                     {
                         "description": "keep change Tab in iterm2",
                         "manipulators": [
@@ -1382,7 +1380,6 @@
                             }
                         ]
                     }
-
                 ]
             },
             "devices": [
