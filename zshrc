@@ -77,6 +77,11 @@ plugins=(
     dircycle
     dirpersist
     vi-mode
+    autoenv
+    autojump
+    bgnotify
+    copybuffer
+    macos
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -121,3 +126,4 @@ bindkey '^[[1;2C' insert-cycledright
 bindkey '^[[1;2A' insert-cycledup
 bindkey '^[[1;2B' insert-cycleddown
 
+source '/opt/homebrew/opt/autoenv/activate.sh'
