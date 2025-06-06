@@ -49,6 +49,10 @@ if [ ! -d '~/.config/foot' ]; then
     cat > ~/.config/foot/foot.ini << "EOF"
     [main]
     font=Unifont:size=12
+
+    [colors]
+    background=000000
+    alpha=0.8
     EOF
 
 fi
