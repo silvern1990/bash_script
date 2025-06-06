@@ -1,5 +1,5 @@
 # mako notify setting
-sudo dnf -y install mako
+pacman -S --noconfirm mako
 
 mkdir -p ~/.config/mako
 
@@ -21,7 +21,7 @@ EOF
 
 
 # fuzzel setting
-sudo dnf -y install fuzzel
+pacman -S --noconfirm fuzzel
 
 cat > ~/.config/fuzzel/fuzzel.ini << "EOF"
 [colors]
@@ -38,7 +38,7 @@ EOF
 # swayr & swayrbar setting
 if cargo; then
 else
-	sudo dnf -y install cargo
+	pacman -S --noconfirm cargo
 fi
 
 git clone https://git.sr.ht/\~tsdh/swayr ~/swayr
