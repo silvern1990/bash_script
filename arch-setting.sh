@@ -1,11 +1,21 @@
 #!/bin/sh
 
+# 
+# 
+#  Arch Linux environment setting for sway
+#
+#
+
+if [ ! -x '/usr/bin/fcitx5' ]; then
+    sudo pacman -S --noconfirm fcitx5 fcitx5-hangul
+fi
+
 if [ ! -d '~/.config/sway' ]; then
     sudo pacman -S --noconfirm sway swaybg swayidle
     mkdir -p ~/.config/sway
     cp /etc/sway/config
     cat > ~/.config/sway/my_config << "EOF"
-    exec waybar
+    exec_always waybar
 
     exec swayidle -w \
         timeout 300 'swaylock -f -c 000000' \
@@ -13,6 +23,8 @@ if [ ! -d '~/.config/sway' ]; then
         before-sleep 'swaylock -f -c 000000'
 
     exec_always swaybg -i ~/.config/sway/background/background.jpg -m fill
+
+    exec fcitx5
     EOF
 fi
 
