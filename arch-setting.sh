@@ -72,3 +72,50 @@ if [ ! -d '~/.config/mako' ]; then
     default-timeout=10000
     EOF
 fi
+
+# sway lid-handler
+
+if [ ! -f '~/.config/systemd/user/lid-handler.service' ]; then
+    mkdir -p ~/.config/systemd/user
+
+    cat > ~/.config/sway/lid-handler.sh << "EOF"
+    #!/bin/sh
+
+    INTERNAL_DISPLAY="eDP-1"
+
+    LID_STATE=$(cat /proc/acpi/button/lid/LID0/state)
+
+    if echo "$LID_STATE" | grep -q "closed"; then
+        swaymsg output $INTERNAL_DISPLAY disable
+    else
+        swaymsg output $INTERNAL_DISPLAY enable
+    fi
+    EOF
+
+    chmod +x ~/.config/sway/lid-handler.sh
+
+    cat > ~/.config/systemd/user/lid-handler.service << "EOF"
+    [Unit]
+    Description=Disable/Enable internal display on lid events
+    After=sway-session.target
+
+    [Service]
+    ExecStart=/home/zero/.config/sway/lid-handler.sh
+    EOF
+
+    cat > ~/.config/systemd/user/lid-handler.path << "EOF"
+    [Unit]
+    Description=Watch for lid state changes
+
+    [Path]
+    PathChanged=/proc/acpi/button/lid/LID0/state
+
+    [Install]
+    WantedBy=default.target
+    EOF
+
+    systemctl --user daemon-reexec
+    systemctl --user daemon-reload
+    systemctl --user enable --now lid-handler.path
+
+fi
