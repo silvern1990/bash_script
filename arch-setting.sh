@@ -15,17 +15,47 @@ if [ ! -d '~/.config/sway' ]; then
     mkdir -p ~/.config/sway
     cp /etc/sway/config
     cat > ~/.config/sway/my_config << "EOF"
-    exec_always waybar
+    exec waybar
 
     exec swayidle -w \
         timeout 300 'swaylock -f -c 000000' \
         timeout 600 'systemctl suspend' \
         before-sleep 'swaylock -f -c 000000'
 
-    exec_always swaybg -i ~/.config/sway/background/background.jpg -m fill
 
     exec fcitx5
+
+    exec_always swaybg -i ~/.config/sway/background/background.jpg -m fit
+
+    exec ~/.config/sway/lid-handler.py
+
+    input type:touchpad {
+        tap enabled
+        dwt enabled
+    }
     EOF
+
+    # sway lid event control
+    cat > ~/.config/sway/lid-handler.py << "EOF"
+    #!/usr/bin/python3
+
+    from evdev import InputDevice, ecodes
+    import subprocess
+
+    dev = InputDevice('/dev/input/event0')
+
+    for event in dev.read_loop():
+        if event.type == ecodes.EV_SW and event.code == ecodes.SW_LID:
+            if event.value == 1:
+                print("close")
+                subprocess.run(['swaymsg', 'output',  'eDP-1', 'disable'])
+            else:
+                print("open")
+                subprocess.run(['swaymsg',  'output', 'eDP-1', 'enable'])
+    EOF
+
+    chmod +x ~/.config/sway/lid-handler.py
+    sudo usermod -aG input $USER
 fi
 
 if [ ! -d '~/.config/fuzzel' ]; then
@@ -71,51 +101,4 @@ if [ ! -d '~/.config/mako' ]; then
     border-size=2
     default-timeout=10000
     EOF
-fi
-
-# sway lid-handler
-
-if [ ! -f '~/.config/systemd/user/lid-handler.service' ]; then
-    mkdir -p ~/.config/systemd/user
-
-    cat > ~/.config/sway/lid-handler.sh << "EOF"
-    #!/bin/sh
-
-    INTERNAL_DISPLAY="eDP-1"
-
-    LID_STATE=$(cat /proc/acpi/button/lid/LID0/state)
-
-    if echo "$LID_STATE" | grep -q "closed"; then
-        swaymsg output $INTERNAL_DISPLAY disable
-    else
-        swaymsg output $INTERNAL_DISPLAY enable
-    fi
-    EOF
-
-    chmod +x ~/.config/sway/lid-handler.sh
-
-    cat > ~/.config/systemd/user/lid-handler.service << "EOF"
-    [Unit]
-    Description=Disable/Enable internal display on lid events
-    After=sway-session.target
-
-    [Service]
-    ExecStart=/home/zero/.config/sway/lid-handler.sh
-    EOF
-
-    cat > ~/.config/systemd/user/lid-handler.path << "EOF"
-    [Unit]
-    Description=Watch for lid state changes
-
-    [Path]
-    PathChanged=/proc/acpi/button/lid/LID0/state
-
-    [Install]
-    WantedBy=default.target
-    EOF
-
-    systemctl --user daemon-reexec
-    systemctl --user daemon-reload
-    systemctl --user enable --now lid-handler.path
-
 fi
