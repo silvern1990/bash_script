@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo $$ > /tmp/roof.pid
+echo $$ > /tmp/wallpaper.pid
 
 
 perform_task() {

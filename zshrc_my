@@ -3,3 +3,6 @@ alias vim='nvim'
 alias todo='todo.sh'
 alias ssh-nas='openssl enc -aes-256-cbc -d -in ~/.ssh/exp/ssh-nas.enc -out /tmp/exp && expect /tmp/exp'
 . "$HOME/.local/bin/env"
+
+alias dw='kill -USR1 $(cat /tmp/wallpaper.pid) && rm -rf /home/zero/sync/sync/$(cat /tmp/gid.txt)'
+alias sk='kill -USR1 $(cat /tmp/wallpaper.pid)'
