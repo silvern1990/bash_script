@@ -1,35 +1,5 @@
-# PS1="%n@%1~ %# "
-
-export JAVA_HOME=/opt/homebrew/Cellar/openjdk@21/21.0.6
-
-PATH=/opt/homebrew/bin:$PATH
-PATH=/opt/homebrew/Cellar/openjdk@21/21.0.6/bin:$PATH
-
-export PATH
-
 source .zshrc_api_key
-
-alias ls='ls -G'
 alias vim='nvim'
-alias ls='ls-go -n'
-
 alias todo='todo.sh'
-
-alias ssh-161='openssl enc -aes-256-cbc -d -in ~/.ssh/exp/ssh_161.enc -out /tmp/exp && expect /tmp/exp'
-alias ssh-git='openssl enc -aes-256-cbc -d -in ~/.ssh/exp/ssh_git.enc -out /tmp/exp && expect /tmp/exp'
-alias ssh-ndps='openssl enc -aes-256-cbc -d -in ~/.ssh/exp/ssh_ndps.enc -out /tmp/exp && expect /tmp/exp'
-alias ssh-hulk='openssl enc -aes-256-cbc -d -in ~/.ssh/exp/ssh_hulk.enc -out /tmp/exp && expect /tmp/exp'
-alias ssh-69='openssl enc -aes-256-cbc -d -in ~/.ssh/exp/ssh_69.enc -out /tmp/exp && expect /tmp/exp'
-alias ssh-smartpem7='openssl enc -aes-256-cbc -d -in ~/.ssh/exp/ssh_smart_pem7.enc -out /tmp/exp && expect /tmp/exp'
-
-
-alias sftp-161='openssl enc -aes-256-cbc -d -in ~/.ssh/exp/sftp_161.enc -out /tmp/exp && expect /tmp/exp'
-alias sftp-git='openssl enc -aes-256-cbc -d -in ~/.ssh/exp/sftp_git.enc -out /tmp/exp && expect /tmp/exp'
-alias sftp-ndps='openssl enc -aes-256-cbc -d -in ~/.ssh/exp/sftp_ndps.enc -out /tmp/exp && expect /tmp/exp'
-alias sftp-hulk='openssl enc -aes-256-cbc -d -in ~/.ssh/exp/sftp_hulk.enc -out /tmp/exp && expect /tmp/exp'
-alias sftp-69='openssl enc -aes-256-cbc -d -in ~/.ssh/exp/sftp_69.enc -out /tmp/exp && expect /tmp/exp'
-alias sftp-smartpem7='openssl enc -aes-256-cbc -d -in ~/.ssh/exp/sftp_smart_pem7.enc -out /tmp/exp && expect /tmp/exp'
-
+alias ssh-nas='openssl enc -aes-256-cbc -d -in ~/.ssh/exp/ssh-nas.enc -out /tmp/exp && expect /tmp/exp'
 . "$HOME/.local/bin/env"
-
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
