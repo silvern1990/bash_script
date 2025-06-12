@@ -44,14 +44,24 @@ if [ ! -d '~/.config/sway' ]; then
 
     dev = InputDevice('/dev/input/event0')
 
-    for event in dev.read_loop():
-        if event.type == ecodes.EV_SW and event.code == ecodes.SW_LID:
-            if event.value == 1:
-                print("close")
-                subprocess.run(['swaymsg', 'output',  'eDP-1', 'disable'])
-            else:
-                print("open")
-                subprocess.run(['swaymsg',  'output', 'eDP-1', 'enable'])
+    def disable_internal_display():
+        subprocess.run(['swaymsg', 'output',  'eDP-1', 'disable'])
+
+    def enable_internal_display():
+        subprocess.run(['swaymsg',  'output', 'eDP-1', 'enable'])
+
+
+    def main():
+        for event in dev.read_loop():
+            if event.type == ecodes.EV_SW and event.code == ecodes.SW_LID:
+                if event.value == 1:
+                    disable_internal_display()
+                else:
+                    enable_internal_display()
+
+
+    if __name__ == '__main__':
+        main()
     EOF
 
     chmod +x ~/.config/sway/lid-handler.py
