@@ -2,7 +2,7 @@
 
 echo $$ > /tmp/check_wallpaper.pid
 
-DB_NAME="/tmp/gid_list.db"
+DB_NAME="/home/zero/gid_list.db"
 wallpaper_dir=~/sync/sync
 
 
