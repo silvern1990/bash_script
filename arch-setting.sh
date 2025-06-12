@@ -14,7 +14,7 @@ if [ ! -d '~/.config/sway' ]; then
     sudo pacman -S --noconfirm sway swaybg swayidle
     mkdir -p ~/.config/sway
     cp /etc/sway/config
-    cat > ~/.config/sway/my_config << "EOF"
+    cat > ~/.config/sway/my_config << EOF
     exec waybar
 
     exec swayidle -w \
@@ -33,10 +33,10 @@ if [ ! -d '~/.config/sway' ]; then
         tap enabled
         dwt enabled
     }
-    EOF
+EOF
 
     # sway lid event control
-    cat > ~/.config/sway/lid-handler.py << "EOF"
+    cat > ~/.config/sway/lid-handler.py << EOF
     #!/usr/bin/python3
 
     from evdev import InputDevice, ecodes
@@ -62,7 +62,7 @@ if [ ! -d '~/.config/sway' ]; then
 
     if __name__ == '__main__':
         main()
-    EOF
+EOF
 
     chmod +x ~/.config/sway/lid-handler.py
     sudo usermod -aG input $USER
@@ -70,7 +70,7 @@ fi
 
 if [ ! -d '~/.config/fuzzel' ]; then
     sudo pacman -S --noconfirm fuzzel
-    cat > ~/.config/fuzzel/fuzzel.ini << "EOF"
+    cat > ~/.config/fuzzel/fuzzel.ini << EOF
     [colors]
     background=282a36fa
     text-color=ffffff
@@ -79,21 +79,21 @@ if [ ! -d '~/.config/fuzzel' ]; then
 
     [border]
     border-width=2
-    EOF
+EOF
 fi
 
 # foot terminal setting
 
 if [ ! -d '~/.config/foot' ]; then
 
-    cat > ~/.config/foot/foot.ini << "EOF"
+    cat > ~/.config/foot/foot.ini << EOF
     [main]
     font=Unifont:size=12
 
     [colors]
     background=000000
     alpha=0.8
-    EOF
+EOF
 
 fi
 
@@ -104,11 +104,11 @@ if [ ! -d '~/.config/mako' ]; then
 
     mkdir -p ~/.config/mako
 
-    cat > ~/.config/mako/config << "EOF"
+    cat > ~/.config/mako/config << EOF
     background-color=#696969
     text-color=#ffffff
     border-color=#555555
     border-size=2
     default-timeout=10000
-    EOF
+EOF
 fi
