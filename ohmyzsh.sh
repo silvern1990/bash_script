@@ -17,11 +17,15 @@ bindkey '^[[1;3A' insert-cycledup
 bindkey '^[[1;3B' insert-cycleddown
 
 source '/usr/share/autoenv-git/activate.sh'
-
+source $HOME/.zsh-background-notify/bgnotify.plugin.zsh
 EOF
 
 fi
 
 if [ ! -f "/usr/bin/autojump" ]; then
     yay -S --noconfirm autojump-rs
+fi
+
+if [ ! -d "$HOME/.zsh-background-notify"]; then
+    git clone https://github.com/t413/zsh-background-notify.git ~/.zsh-background-notify
 fi
