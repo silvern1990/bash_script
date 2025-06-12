@@ -3,7 +3,7 @@
 echo $$ > /tmp/check_wallpaper.pid
 
 DB_NAME="/home/zero/gid_list.db"
-wallpaper_dir=~/sync/sync
+wallpaper_dir=~/sync/normal
 
 
 if [ ! -f "$DB_NAME" ]; then
@@ -13,6 +13,19 @@ sqlite3 $DB_NAME << EOF
 CREATE TABLE IF NOT EXISTS gid_list (
     gid TEXT PRIMARY KEY
 );
+
+EOF
+
+cat > ~/alias/.env << EOF
+
+alias d='rm -rf ${wallpaper_dir}/\$(cat /tmp/check_gid) && sqlite3 /home/zero/gid_list.db "delete from gid_list where gid=\$(cat /tmp/check_gid);" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
+
+alias n='sqlite3 ~/gid_list.db "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
+
+alias normal='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/sync/normal/\$(cat /tmp/check_gid) && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
+alias al='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/sync/allow/\$(cat /tmp/check_gid) && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
+alias dn='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/sync/deny/\$(cat /tmp/check_gid) && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
+
 
 EOF
 
