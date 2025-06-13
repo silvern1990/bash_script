@@ -26,6 +26,6 @@ if [ ! -f "/usr/bin/autojump" ]; then
     yay -S --noconfirm autojump-rs
 fi
 
-if [ ! -d "$HOME/.zsh-background-notify"]; then
+if [ ! -d "$HOME/.zsh-background-notify" ]; then
     git clone https://github.com/t413/zsh-background-notify.git ~/.zsh-background-notify
 fi

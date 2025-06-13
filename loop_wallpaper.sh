@@ -3,7 +3,7 @@
 echo $$ > /tmp/check_wallpaper.pid
 
 DB_NAME="/home/zero/gid_list.db"
-wallpaper_dir=~/normal
+wallpaper_dir=~/sync/sync
 
 
 if [ ! -f "$DB_NAME" ]; then
@@ -11,7 +11,8 @@ if [ ! -f "$DB_NAME" ]; then
 sqlite3 $DB_NAME << EOF
 
 CREATE TABLE IF NOT EXISTS gid_list (
-    gid TEXT PRIMARY KEY
+    gid TEXT PRIMARY KEY,
+    title TEXT
 );
 
 EOF
@@ -22,14 +23,16 @@ alias d='rm -rf ${wallpaper_dir}/\$(cat /tmp/check_gid) && sqlite3 /home/zero/gi
 
 alias n='sqlite3 ~/gid_list.db "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
 
-alias normal='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/sync/normal/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid) && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
-alias al='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/sync/allow/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid) && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
-alias dn='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/sync/deny/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid) && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
+alias normal='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/sync/normal/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
+alias al='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/sync/allow/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
+alias dn='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/sync/deny/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
 
 
 EOF
 
 for gid in ${wallpaper_dir}/*; do
+    title=$(cat ${gid}/project.json | jq '.title')
+    title="${title//\'/\'\'}"
     gid=$(basename $gid)
 
     case "$gid" in
@@ -37,7 +40,7 @@ for gid in ${wallpaper_dir}/*; do
             echo "$gid"
             ;;
         *)
-            sqlite3 $DB_NAME "INSERT INTO gid_list (gid) VALUES ('$gid');"
+            sqlite3 $DB_NAME "INSERT INTO gid_list (gid, title) VALUES ('$gid', '$title');"
             ;;
     esac
 
@@ -46,11 +49,13 @@ done
 fi
 
 perform_task(){
-    gid="$(sqlite3 $DB_NAME 'select gid from gid_list limit 1')"
-    echo $gid
-    command="/home/zero/util/linux-wallpaperengine/linux-wallpaperengine --screen-root DP-2 --bg ${wallpaper_dir}/$gid --scaling fit"
+    row="$(sqlite3 $DB_NAME 'select gid,title from gid_list order by title limit 1')"
+    IFS='|' read -r gid title <<< "$row"
+    echo $title
 
-    $command &
+    command="/home/zero/util/linux-wallpaperengine/linux-wallpaperengine --screen-root eDP-1 --bg ${wallpaper_dir}/$gid --scaling fit"
+
+    $command 2>&1 > /dev/null &
 
     pid=$!
 
