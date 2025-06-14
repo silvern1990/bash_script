@@ -49,21 +49,34 @@ done
 fi
 
 perform_task(){
-    row="$(sqlite3 $DB_NAME 'select gid,title from gid_list order by title limit 1')"
-    IFS='|' read -r gid title <<< "$row"
-    echo $title
+    (
 
-    command="/home/zero/util/linux-wallpaperengine/linux-wallpaperengine --screen-root eDP-1 --bg ${wallpaper_dir}/$gid --scaling fit"
+        row="$(sqlite3 $DB_NAME 'select gid,title from gid_list order by title limit 1')"
+        IFS='|' read -r gid title <<< "$row"
+        echo $title
 
-    $command 2>&1 > /dev/null &
+        command="/home/zero/util/linux-wallpaperengine/linux-wallpaperengine --screen-root eDP-1 --bg ${wallpaper_dir}/$gid --scaling fit"
 
-    pid=$!
+        $command &
 
-    echo "$gid" > /tmp/check_gid
+        pid=$!
+
+        echo "$pid" > /tmp/galary.pid
+
+        echo "$gid" > /tmp/check_gid
+
+        wait $pid
+
+        if [ "$?" != 0  -a "$?" != 143 ]; then
+            $(sqlite3 $DB_NAME "delete from gid_list where gid = $gid")
+            kill -USR1 $$
+        fi
+
+    ) &
 }
 
 handle_signal() {
-    kill $pid
+    kill $(cat /tmp/galary.pid)
     restart_task=1
 }
 
@@ -83,11 +96,7 @@ while true; do
             break
         fi
 
-        if [ "$?" != 0 ]; then
-            break
-        fi
-
         sleep 1
     done
-    kill $pid
+    kill $(cat /tmp/galary.pid)
 done
