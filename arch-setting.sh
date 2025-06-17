@@ -15,6 +15,7 @@ if [ ! -d '~/.config/sway' ]; then
     mkdir -p ~/.config/sway
     cp /etc/sway/config
     cat > ~/.config/sway/my_config << EOF
+
     exec waybar
 
     exec swayidle -w \
@@ -32,7 +33,10 @@ if [ ! -d '~/.config/sway' ]; then
     input type:touchpad {
         tap enabled
         dwt enabled
+        natural_scroll enabled
+        pointer_accel 0.3
     }
+
 EOF
 
     # sway lid event control

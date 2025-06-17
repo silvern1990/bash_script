@@ -55,7 +55,7 @@ perform_task(){
         IFS='|' read -r gid title <<< "$row"
         echo $title
 
-        command="/home/zero/util/linux-wallpaperengine/linux-wallpaperengine --screen-root eDP-1 --bg ${wallpaper_dir}/$gid --scaling fit"
+        command="/home/zero/util/linux-wallpaperengine/linux-wallpaperengine --screen-root eDP-1 --bg ${wallpaper_dir}/$gid --scaling fit --volume 100"
 
         $command &
 
@@ -82,7 +82,7 @@ handle_signal() {
 
 trap 'handle_signal' SIGUSR1
 
-INTERVAL=1200
+INTERVAL=12000
 restart_task=0
 
 while true; do
