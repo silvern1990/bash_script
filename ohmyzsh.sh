@@ -26,6 +26,14 @@ if [ ! -f "/usr/bin/autojump" ]; then
     yay -S --noconfirm autojump-rs
 fi
 
+# setting bgnotify
 if [ ! -d "$HOME/.zsh-background-notify" ]; then
     git clone https://github.com/t413/zsh-background-notify.git ~/.zsh-background-notify
+
+    # patch for wayland and sway
+    sed -i '/^currentWindowId () {/,/^}$/c\
+currentWindowId () {\
+    echo $(swaymsg -t get_tree | jq -r ".. | select(.focused?) | .id")\
+}
+' ~/.zsh-background-notify/bgnotify.plugin.zsh
 fi
