@@ -11,7 +11,7 @@ if [ ! -x '/usr/bin/fcitx5' ]; then
 fi
 
 if [ ! -d '~/.config/sway' ]; then
-    sudo pacman -S --noconfirm sway swaybg swayidle
+    sudo pacman -S --noconfirm sway swaybg swayidle waybar
     mkdir -p ~/.config/sway
     cp /etc/sway/config
     cat > ~/.config/sway/my_config << EOF

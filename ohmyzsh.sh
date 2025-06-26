@@ -22,6 +22,10 @@ EOF
 
 fi
 
+if [ ! -d "/usr/share/autoenv-git" ]; then
+    yay -S --noconfirm autoenv-git
+fi
+
 if [ ! -f "/usr/bin/autojump" ]; then
     yay -S --noconfirm autojump-rs
 fi
