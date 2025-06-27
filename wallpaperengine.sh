@@ -4,13 +4,14 @@ echo $$ > /tmp/wallpaper.pid
 
 
 perform_task() {
-    gid="$(ls /home/zero/sync/sync | sort -R | head -n1)"
-    command="/home/zero/util/linux-wallpaperengine/linux-wallpaperengine --screen-root DP-2 --bg /home/zero/sync/sync/$gid --scaling fit"
+    gid="$(ls ~/.sync/wallpaper/normal | sort -R | head -n1)"
+    command="wallpaperengine --screen-root eDP-1 --bg /home/zero/sync/sync/$gid --scaling fit"
 
     $command &
 
     pid=$!
 
+    echo "$pid" > /tmp/wallpaper.pid
     echo "$gid" > /tmp/gid.txt
 }
 
@@ -24,10 +25,16 @@ trap 'handle_signal' SIGUSR1
 INTERVAL=1200
 restart_task=0
 
+
+cat > ~/alias/.env << EOF
+alias n='kill -USR1 \$(cat /tmp/wallpaper.pid)'
+EOF
+
 while true; do
     perform_task
 
     SECONDS=0
+
     while [ $SECONDS -lt $INTERVAL ]; do
         if [ "$restart_task" -eq 1 ]; then
             restart_task=0

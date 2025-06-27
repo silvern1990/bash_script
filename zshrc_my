@@ -3,4 +3,6 @@ alias vim='nvim'
 alias todo='todo.sh'
 alias ssh-nas='openssl enc -aes-256-cbc -d -in ~/.ssh/exp/ssh-nas.enc -out /tmp/exp && expect /tmp/exp'
 
+export PATH=$PATH:~/.local/bin
+
 . "$HOME/.local/bin/env"
