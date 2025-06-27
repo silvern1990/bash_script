@@ -13,7 +13,7 @@ fi
 if [ ! -d '~/.config/sway' ]; then
     sudo pacman -S --noconfirm sway swaybg swayidle waybar
     mkdir -p ~/.config/sway
-    cp /etc/sway/config
+    cp /etc/sway/config ~/.config/sway/config
     cat > ~/.config/sway/my_config << EOF
 
     exec waybar
@@ -74,6 +74,7 @@ fi
 
 if [ ! -d '~/.config/fuzzel' ]; then
     sudo pacman -S --noconfirm fuzzel
+    mkdir -p ~/.config/fuzzel
     cat > ~/.config/fuzzel/fuzzel.ini << EOF
     [colors]
     background=282a36fa
@@ -89,7 +90,7 @@ fi
 # foot terminal setting
 
 if [ ! -d '~/.config/foot' ]; then
-
+    mkdir -p ~/.config/foot
     cat > ~/.config/foot/foot.ini << EOF
     [main]
     font=Unifont:size=12
