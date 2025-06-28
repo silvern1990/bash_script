@@ -3,7 +3,8 @@
 echo $$ > /tmp/check_wallpaper.pid
 
 DB_NAME="/home/zero/gid_list.db"
-wallpaper_dir=~/sync/sync
+wallpaper_dir=~/.sync/wallpaper
+wallpaper_engine=wallpaperengine
 
 
 if [ ! -f "$DB_NAME" ]; then
@@ -23,9 +24,9 @@ alias d='rm -rf ${wallpaper_dir}/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "del
 
 alias n='sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
 
-alias normal='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/sync/normal/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
-alias al='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/sync/allow/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
-alias dn='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/sync/deny/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
+alias normal='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/normal/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
+alias al='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/allow/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
+alias dn='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/deny/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
 
 
 EOF
@@ -55,7 +56,7 @@ perform_task(){
         IFS='|' read -r gid title <<< "$row"
         echo $title
 
-        command="/home/zero/util/linux-wallpaperengine/linux-wallpaperengine --screen-root eDP-1 --bg ${wallpaper_dir}/$gid --scaling fit --volume 100"
+        command="$wallpaper_engine --screen-root eDP-1 --bg ${wallpaper_dir}/$gid --scaling fit --volume 100"
 
         $command &
 
