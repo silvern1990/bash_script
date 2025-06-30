@@ -35,10 +35,11 @@ input type:touchpad {
 
 default_border pixel 1
 
-client.focused          #000000cc #000000cc #ffffffff #000000cc #000000cc
-client.unfocused        #00000077 #00000077 #ffffff99 #00000000 #00000077
-client.focused_inactive #00000077 #00000077 #ffffff99 #00000000 #00000077
-client.urgent           #00000077 #00000077 #ffffff99 #00000000 #00000077
+client.focused          #4c7899 #285577ff #ffffff #2e9ef4
+client.unfocused        #333333 #22222277 #ffffff #292d3e
+client.urgent           #2f343a #900000 #ffffff #900000
+client.placeholder      #000000 #0c0c0c #ffffff #000000
+client.background       #ffffff
 
 EOF
 
