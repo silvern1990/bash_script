@@ -26,20 +26,14 @@ exec_always swaybg -i ~/.config/sway/background/background.jpg -m fit
 
 exec ~/.config/sway/lid-handler.py
 
-input type:touchpad {
-    tap enabled
-    dwt enabled
-    natural_scroll enabled
-    pointer_accel 0.3
-}
-
-default_border pixel 1
-
 client.focused          #4c7899 #285577ff #ffffff #2e9ef4
 client.unfocused        #333333 #22222277 #ffffff #292d3e
 client.urgent           #2f343a #900000 #ffffff #900000
 client.placeholder      #000000 #0c0c0c #ffffff #000000
 client.background       #ffffff
+
+
+bindsym $mod+Shift+M exec swaylock -c 000000
 
 EOF
 
