@@ -5,12 +5,15 @@ echo $$ > /tmp/wallpaper.pid
 
 perform_task() {
     gid="$(ls ~/.sync/wallpaper/normal | sort -R | head -n1)"
-    command="wallpaperengine --screen-root eDP-1 --bg /home/zero/sync/sync/$gid --scaling fit"
 
-    $command &
+    for display in "$@"; do
+        echo $display
+        command="wallpaperengine --screen-root $display --bg /home/zero/.sync/wallpaper/normal/$gid --scaling fit"
+        $command &
+    done
+
 
     pid=$!
-
     echo "$pid" > /tmp/wallpaper.pid
     echo "$gid" > /tmp/gid.txt
 }
@@ -31,7 +34,7 @@ alias n='kill -USR1 \$(cat /tmp/wallpaper.pid)'
 EOF
 
 while true; do
-    perform_task
+    perform_task $@
 
     SECONDS=0
 
