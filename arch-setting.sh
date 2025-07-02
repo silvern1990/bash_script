@@ -15,6 +15,10 @@ if [ ! -d '~/.config/sway' ]; then
     mkdir -p ~/.config/sway
     cp /etc/sway/config ~/.config/sway/config
     cat > ~/.config/sway/my_config << EOF
+input "type:pointer" {
+    scroll_factor 0.5
+}
+
 exec waybar
 
 exec swayidle -w         timeout 300 'swaylock -f -c 000000'         timeout 600 'systemctl suspend'         before-sleep 'swaylock -f -c 000000'
@@ -26,7 +30,7 @@ exec_always swaybg -i ~/.config/sway/background/background.jpg -m fit
 
 exec ~/.config/sway/lid-handler.py
 
-client.focused          #4c7899 #285577ff #ffffff #2e9ef4
+client.focused          #4c7899 #28557788 #ffffff #2e9ef4
 client.unfocused        #333333 #22222277 #ffffff #292d3e
 client.urgent           #2f343a #900000 #ffffff #900000
 client.placeholder      #000000 #0c0c0c #ffffff #000000
