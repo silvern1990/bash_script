@@ -21,7 +21,7 @@ input "type:pointer" {
 
 exec waybar
 
-exec swayidle -w         timeout 300 'swaylock -f -c 000000'         timeout 600 'systemctl suspend'         before-sleep 'swaylock -f -c 000000'
+exec swayidle -w         timeout 300 'swaylock -f -c 000000'    timeout 18000 'systemctl halt'         before-sleep 'swaylock -f -c 000000'
 
 
 exec fcitx5
@@ -33,7 +33,7 @@ exec ~/.config/sway/lid-handler.py
 output DP-1 pos 0 0
 output eDP-1 pos 640 1440
 
-client.focused          #4c7899 #28557788 #ffffff #2e9ef4
+client.focused          #4c7899 #ffffff88 #000000 #2e9ef4
 client.unfocused        #333333 #22222277 #ffffff #292d3e
 client.urgent           #2f343a #900000 #ffffff #900000
 client.placeholder      #000000 #0c0c0c #ffffff #000000
