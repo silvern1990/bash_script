@@ -2,19 +2,16 @@
 
 cursoron(){
     # 커서 표시
-    echo "\033[?25h"
-    exit 1
+    tput cnorm
 }
-
 
 trap cursoron SIGINT
 
 # 커서 숨김
-echo "\033[?25l"
+tput civis
 
-# docker stats 을 메인 쉘 에서 실행하면 SIGINT 를 가로채기 때문에 trap 이 실행되지 않는다. 서브 쉘로 실행하여 trap이 정상작동하도록 만든다.
-
-(docker stats --format "{{.Container}},{{.CPUPerc}},{{.MemUsage}}" | while IFS=, read -r container cpu mem; 
+# docker stats 을 메인 쉘 에서 실행하면 SIGINT 를 가로채기 때문에 trap 을 사용한다.
+docker stats --format "{{.Container}},{{.CPUPerc}},{{.MemUsage}}" | while IFS=, read -r container cpu mem;
 do
     image=$(docker ps --filter "id=$container" --format "{{.Image}}")
 
@@ -24,8 +21,7 @@ do
         STATINFO="$container"
     fi
     echo $STATINFO
-done) &
-
-while true; do
-    sleep 30
 done
+
+# 스크립트 종료 시 커서 다시 표시
+tput cnorm
