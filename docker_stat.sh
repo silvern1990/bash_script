@@ -5,12 +5,12 @@ cursoron(){
     tput cnorm
 }
 
+# docker stats 을 메인 쉘 에서 실행하면 SIGINT 를 가로채기 때문에 trap 을 사용한다.
 trap cursoron SIGINT
 
 # 커서 숨김
 tput civis
 
-# docker stats 을 메인 쉘 에서 실행하면 SIGINT 를 가로채기 때문에 trap 을 사용한다.
 docker stats --format "{{.Container}},{{.CPUPerc}},{{.MemUsage}}" | while IFS=, read -r container cpu mem;
 do
     image=$(docker ps --filter "id=$container" --format "{{.Image}}")

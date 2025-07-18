@@ -30,7 +30,9 @@ exec_always swaybg -i ~/.config/sway/background/background.jpg -m fit
 
 exec ~/.config/sway/lid-handler.py
 
+output eDP-1 scale 2
 output DP-1 pos 0 0
+output DP-2 pos 0 0
 output eDP-1 pos 640 1440
 
 client.focused          #4c7899 #ffffff88 #000000 #2e9ef4
