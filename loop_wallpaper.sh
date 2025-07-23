@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 echo $$ > /tmp/check_wallpaper.pid
 
 DB_NAME="/home/zero/gid_list.db"
@@ -18,18 +19,6 @@ CREATE TABLE IF NOT EXISTS gid_list (
 
 EOF
 
-cat > ~/alias/.env << EOF
-
-alias d='rm -rf ${wallpaper_dir}/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid);" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
-
-alias n='sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
-
-alias normal='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/normal/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
-alias al='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/allow/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
-alias dn='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/deny/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
-
-
-EOF
 
 for gid in ${wallpaper_dir}/*; do
     title=$(cat ${gid}/project.json | jq '.title')
@@ -49,6 +38,21 @@ done
 
 fi
 
+
+cat > ~/alias/.env << EOF
+
+alias d='rm -rf ${wallpaper_dir}/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid);" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
+
+alias n='sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
+
+alias error='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/error/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
+alias normal='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/normal/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
+alias al='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/allow/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
+alias dn='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/deny/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
+
+
+EOF
+
 perform_task(){
     (
 
@@ -56,7 +60,7 @@ perform_task(){
         IFS='|' read -r gid title <<< "$row"
         echo $title
 
-        command="$wallpaper_engine --screen-root eDP-1 --bg ${wallpaper_dir}/$gid --scaling fit --volume 100"
+        command="$wallpaper_engine --screen-root eDP-1 --bg ${wallpaper_dir}/$gid --scaling fit --volume 50"
 
         $command &
 
@@ -69,7 +73,7 @@ perform_task(){
         wait $pid
 
         if [ "$?" != 0  -a "$?" != 143 ]; then
-            $(sqlite3 $DB_NAME "delete from gid_list where gid = $gid")
+            mv ${wallpaper_dir}/${gid} ~/.sync/wallpaper/error/${gid} && sqlite3 $DB_NAME "delete from gid_list where gid=${gid}"
             kill -USR1 $$
         fi
 
@@ -101,3 +105,5 @@ while true; do
     done
     kill $(cat /tmp/galary.pid)
 done
+
+tput cnorm
