@@ -14,7 +14,9 @@ sqlite3 $DB_NAME << EOF
 
 CREATE TABLE IF NOT EXISTS gid_list (
     gid TEXT PRIMARY KEY,
-    title TEXT
+    title TEXT,
+    resolution TEXT,
+    play_time int
 );
 
 EOF
@@ -23,6 +25,20 @@ EOF
 for gid in ${wallpaper_dir}/*; do
     title=$(cat ${gid}/project.json | jq '.title')
     title="${title//\'/\'\'}"
+
+
+    resolution=""
+    play_time=0
+
+    ls ${gid}/*.mp4
+    if [ $? -eq 0 ]; then
+        resolution=$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 ${gid}/*.mp4)
+        play_time=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 ${gid}/*.mp4)
+
+        echo $resolution
+        echo $play_time
+    fi
+
     gid=$(basename $gid)
 
     case "$gid" in
@@ -30,7 +46,7 @@ for gid in ${wallpaper_dir}/*; do
             echo "$gid"
             ;;
         *)
-            sqlite3 $DB_NAME "INSERT INTO gid_list (gid, title) VALUES ('$gid', '$title');"
+            sqlite3 $DB_NAME "INSERT INTO gid_list (gid, title, resolution, play_time) VALUES ('$gid', '$title', '$resolution', $play_time);"
             ;;
     esac
 
@@ -45,22 +61,26 @@ alias d='rm -rf ${wallpaper_dir}/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "del
 
 alias n='sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
 
-alias error='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/error/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
-alias normal='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/normal/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
-alias al='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/allow/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
-alias dn='mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/deny/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
+alias error='([ -e ${wallpaper_dir}/error/\$(cat /tmp/check_gid) ] && rm -rf ${wallpaper_dir}/\$(cat /tmp/check_gid)) || mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/error/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
 
+alias normal='([ -e ${wallpaper_dir}/normal/\$(cat /tmp/check_gid) ] && rm -rf ${wallpaper_dir}/\$(cat /tmp/check_gid)) || mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/normal/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
+
+alias al='([ -e ${wallpaper_dir}/allow/\$(cat /tmp/check_gid) ] && rm -rf ${wallpaper_dir}/\$(cat /tmp/check_gid)) || mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/allow/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
+
+alias dn='([ -e ${wallpaper_dir}/deny/\$(cat /tmp/check_gid) ] && rm -rf ${wallpaper_dir}/\$(cat /tmp/check_gid)) || mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/deny/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
+
+alias vc='mpv --volume=100 --fullscreen \$(cat /tmp/check_gid)/*.mp4'
 
 EOF
 
 perform_task(){
     (
 
-        row="$(sqlite3 $DB_NAME 'select gid,title from gid_list order by title limit 1')"
+        row="$(sqlite3 $DB_NAME 'select gid,title from gid_list order by play_time limit 1')"
         IFS='|' read -r gid title <<< "$row"
         echo $title
 
-        command="$wallpaper_engine --screen-root eDP-1 --bg ${wallpaper_dir}/$gid --scaling fit --volume 50"
+        command="$wallpaper_engine --screen-root eDP-1 --bg ${wallpaper_dir}/$gid --scaling fit --volume 0"
 
         $command &
 
