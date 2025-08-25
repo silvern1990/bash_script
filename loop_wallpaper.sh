@@ -1,10 +1,14 @@
 #!/bin/bash
 
+if [ -z $1 ]; then
+    echo "USAGE: display-port"
+    exit 1
+fi
 
 echo $$ > /tmp/check_wallpaper.pid
 
 DB_NAME="/home/zero/gid_list.db"
-wallpaper_dir=~/.sync/wallpaper
+wallpaper_dir=~/.sync/wallpaper/deny
 wallpaper_engine=wallpaperengine
 
 
