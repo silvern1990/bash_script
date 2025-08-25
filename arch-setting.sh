@@ -115,10 +115,21 @@ if [ ! -d '~/.config/mako' ]; then
     mkdir -p ~/.config/mako
 
     cat > ~/.config/mako/config << EOF
-background-color=#696969
-text-color=#ffffff
-border-color=#555555
-border-size=2
-default-timeout=10000
+    background-color=#696969
+    text-color=#ffffff
+    border-color=#555555
+    border-size=2
+    width=400
+    height=200
+    anchor=top-center
+    default-timeout=10000
+
+    [urgency=high]
+    background-color=#E55561
+    border-color=#FF0000
+    text-color=#FFFFFF
+    width=400
+    height=200
+    anchor=top-center
 EOF
 fi
