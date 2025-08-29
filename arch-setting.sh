@@ -16,12 +16,16 @@ if [ ! -d '~/.config/sway' ]; then
     cp /etc/sway/config ~/.config/sway/config
     cat > ~/.config/sway/my_config << EOF
 input "type:pointer" {
-    scroll_factor 0.5
+    scroll_factor 0.3
+}
+
+input "type:touchpad" {
+    scroll_factor 0.2
 }
 
 exec waybar
 
-exec swayidle -w         timeout 300 'swaylock -f -c 000000'    timeout 18000 'systemctl halt'         before-sleep 'swaylock -f -c 000000'
+#exec swayidle -w         timeout 300 'swaylock -f -c 000000'    timeout 18000 'systemctl halt'         before-sleep 'swaylock -f -c 000000'
 
 
 exec fcitx5
@@ -34,6 +38,9 @@ output eDP-1 scale 2
 output DP-1 pos 0 0
 output DP-2 pos 0 0
 output eDP-1 pos 640 1440
+output HDMI-A-1 mode 2560x1440@60Hz
+output HDMI-A-1 pos 0 0
+output eDP-1 mode 2560x1600@120Hz
 
 client.focused          #4c7899 #ffffff88 #000000 #2e9ef4
 client.unfocused        #333333 #22222277 #ffffff #292d3e
@@ -42,6 +49,9 @@ client.placeholder      #000000 #0c0c0c #ffffff #000000
 client.background       #ffffff
 
 bindsym $mod+Shift+M exec swaylock -c 000000
+bindsym $mod+n exec bash -c "shopt -s expand_aliases && source ~/alias/.env && eval n"
+bindsym $mod+apostrophe exec bash -c "shopt -s expand_aliases && source ~/alias/.env && eval d"
+bindsym $mod+x exec killall wallpaperengine
 EOF
 
     # sway lid event control
