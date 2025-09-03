@@ -7,8 +7,8 @@ fi
 
 echo $$ > /tmp/check_wallpaper.pid
 
-DB_NAME="/home/zero/gid_list.db"
-wallpaper_dir=~/.sync/wallpaper/deny
+DB_NAME="/home/zero/wallpaper.db"
+wallpaper_dir=~/.sync/wallpaper
 wallpaper_engine=wallpaperengine
 
 
@@ -61,7 +61,7 @@ fi
 
 cat > ~/alias/.env << EOF
 
-alias d='rm -rf ${wallpaper_dir}/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid);" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
+alias d='rm -rf ${wallpaper_dir}/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid);" && kill -USR1 \$(cat /tmp/check_wallpaper.pid) && echo \$(cat /tmp/check_gid) > /tmp/prev_gid'
 
 alias n='sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
 
@@ -69,9 +69,9 @@ alias error='([ -e ~/.sync/wallpaper/error/\$(cat /tmp/check_gid) ] && rm -rf ${
 
 alias normal='([ -e ~/.sync/wallpaper/normal/\$(cat /tmp/check_gid) ] && rm -rf ${wallpaper_dir}/\$(cat /tmp/check_gid)) || mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/normal/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
 
-alias al='([ -e ~/.sync/wallpaper/allow/\$(cat /tmp/check_gid) ] && rm -rf ${wallpaper_dir}/\$(cat /tmp/check_gid)) || mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/allow/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
+alias al='([ -e ~/.sync/wallpaper/allow/\$(cat /tmp/check_gid) ] && rm -rf ${wallpaper_dir}/\$(cat /tmp/check_gid)) || mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/allow/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid) && echo \$(cat /tmp/check_gid) > /tmp/prev_gid'
 
-alias dn='([ -e ~/.sync/wallpaper/deny/\$(cat /tmp/check_gid) ] && rm -rf ${wallpaper_dir}/\$(cat /tmp/check_gid)) || mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/deny/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)'
+alias dn='([ -e ~/.sync/wallpaper/deny/\$(cat /tmp/check_gid) ] && rm -rf ${wallpaper_dir}/\$(cat /tmp/check_gid)) || mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/deny/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid) && echo \$(cat /tmp/check_gid) > /tmp/prev_gid'
 
 alias vc='mpv --volume=100 --fullscreen \$(cat /tmp/check_gid)/*.mp4'
 
@@ -84,7 +84,7 @@ perform_task(){
         IFS='|' read -r gid title <<< "$row"
         echo $title
 
-        command="$wallpaper_engine --screen-root $1 --bg ${wallpaper_dir}/$gid --scaling fit --volume 100 --fps 60 --no-fullscreen-pause"
+        command="$wallpaper_engine --screen-root $1 --bg ${wallpaper_dir}/$gid --scaling fit --volume 100 --fps 60"
 
         $command &
 
@@ -97,7 +97,14 @@ perform_task(){
         wait $pid
 
         if [ "$?" != 0  -a "$?" != 143 ]; then
-            mv ${wallpaper_dir}/${gid} ~/.sync/wallpaper/error/${gid} && sqlite3 $DB_NAME "delete from gid_list where gid=${gid}"
+            if [ -e "$HOME/.sync/wallpaper/error/$gid" ]; then
+                rm -rf "${wallpaper_dir:?}/$gid"
+            else
+                mv "${wallpaper_dir:?}/$gid" "$HOME/.sync/wallpaper/error/$gid"
+            fi
+
+            sqlite3 "$DB_NAME" "delete from gid_list where gid=$gid"
+
             kill -USR1 $$
         fi
 
@@ -111,7 +118,7 @@ handle_signal() {
 
 trap 'handle_signal' SIGUSR1
 
-INTERVAL=12000
+INTERVAL=120000
 restart_task=0
 
 while true; do
