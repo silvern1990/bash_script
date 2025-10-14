@@ -1,11 +1,12 @@
 #!/bin/sh
 
 echo $$ > /tmp/wallpaper.pid
+echo "1" > /tmp/gid.txt
 
 pid=""
 
 wallpaper_dir="/home/zero/.sync/wallpaper"
-kind="deny"
+kind="normal"
 
 
 INTERVAL=600
@@ -18,15 +19,16 @@ perform_task() {
         PLAY_TIME=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 ${wallpaper_dir}/${kind}/${gid}/*.mp4)
         INTERVAL=$(awk "BEGIN {printf(\"%.0f\", $PLAY_TIME)}")
     else
-        INTERVAL=60
+        INTERVAL=600
     fi
 
-    if [ $INTERVAL -lt 60 ]; then
-        INTERVAL=60
+    if [ $INTERVAL -lt 600 ]; then
+        INTERVAL=600
     fi
 
     for display in "$@"; do
         command="wallpaperengine --screen-root $display --bg /home/zero/.sync/wallpaper/$kind/$gid --scaling fit --volume 100"
+        # command="wallpaperengine /home/zero/.sync/wallpaper/$kind/$gid --volume 100"
         $command >> /dev/null &
         pid+="${!} "
     done
