@@ -5,6 +5,7 @@ ctrl + alt - j : yabai -m window --grid 2:2:0:1:1:1
 ctrl + alt - k : yabai -m window --grid 2:2:1:1:1:1
 ctrl + alt - h : yabai -m window --grid 1:2:0:0:1:1
 ctrl + alt - l : yabai -m window --grid 1:2:1:0:1:1
+ctrl + alt - f : yabai -m window --grid 1:1:0:0:1:1
 
 # float focus 이동
 alt - left : ~/.config/skhd/float-focus.sh left
