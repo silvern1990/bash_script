@@ -1,0 +1,6 @@
+# addition script 실행 (스페이스 이동 명령등 일부 명령어 활성화에 필요)
+yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+sudo yabai --load-sa
+
+yabai -m config layout bsp
+yabai -m config --space 2 layout float

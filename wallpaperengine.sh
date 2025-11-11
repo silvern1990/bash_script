@@ -6,7 +6,7 @@ echo "1" > /tmp/gid.txt
 pid=""
 
 wallpaper_dir="/home/zero/.sync/wallpaper"
-kind="normal"
+kind="deny"
 
 
 INTERVAL=600
