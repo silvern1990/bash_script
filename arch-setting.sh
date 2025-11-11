@@ -15,9 +15,8 @@ if [ ! -d '~/.config/sway' ]; then
     mkdir -p ~/.config/sway
     cp /etc/sway/config ~/.config/sway/config
     cat > ~/.config/sway/my_config << EOF
-
 input "type:pointer" {
-    scroll_factor 1
+    scroll_factor 0.8
 }
 
 input "type:touchpad" {
@@ -38,7 +37,9 @@ exec_always swaybg -i ~/.config/sway/background/background.jpg -m fit
 
 exec ~/.config/sway/lid-handler.py
 
-output eDP-1 scale 1.625
+exec swaync
+
+output eDP-1 scale 2
 output DP-1 pos 0 0
 output DP-2 pos 0 0
 output eDP-1 pos 640 1440
@@ -54,10 +55,16 @@ client.background       #ffffff
 
 bindsym $mod+Shift+M exec swaylock -c 000000
 bindsym $mod+Shift+n exec bash -c "shopt -s expand_aliases && source ~/alias/.env && eval n"
-bindsym $mod+Shift+apostrophe exec bash -c "shopt -s expand_aliases && source ~/alias/.env && eval d"
-bindsym $mod+x exec killall wallpaperengine
+bindsym $mod+Shift+x exec bash -c "shopt -s expand_aliases && source ~/alias/.env && eval d"
+bindsym $mod+x exec killall -s 9 wallpaperengine
 bindsym $mod+Shift+a exec bash -c "shopt -s expand_aliases && source ~/alias/.env && eval al"
 bindsym $mod+Shift+d exec bash -c "shopt -s expand_aliases && source ~/alias/.env && eval dn"
+bindsym $mod+Shift+v exec bash -c "shopt -s expand_aliases && source ~/alias/.env && eval vc"
+bindsym $mod+Shift+s exec swaync-client -t -sw
+
+#group change
+bindsym $mod+Ctrl+h focus parent, focus left, focus child
+bindsym $mod+Ctrl+l focus parent, focus right, focus child
 EOF
 
     # sway lid event control
