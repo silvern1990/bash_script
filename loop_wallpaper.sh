@@ -124,7 +124,7 @@ perform_task(){
 }
 
 handle_signal() {
-    kill $(cat /tmp/galary.pid)
+    killall -s 9 wallpaperengine
     restart_task=1
 }
 
