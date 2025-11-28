@@ -96,7 +96,7 @@ perform_task(){
             exit 1
         fi
 
-        command="$wallpaper_engine --screen-root $1 --bg ${wallpaper_dir}/$gid --scaling fit --volume 60 --fps 60"
+        command="$wallpaper_engine --screen-root $1 --bg ${wallpaper_dir}/$gid --scaling fill --no-fullscreen-pause --volume 60 --fps 60"
 
         $command &
 
