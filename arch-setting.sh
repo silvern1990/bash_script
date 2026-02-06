@@ -16,7 +16,7 @@ if [ ! -d '~/.config/sway' ]; then
     cp /etc/sway/config ~/.config/sway/config
     cat > ~/.config/sway/my_config << EOF
 input "type:pointer" {
-    scroll_factor 0.8
+    scroll_factor 0.4
 }
 
 input "type:touchpad" {
@@ -40,12 +40,15 @@ exec ~/.config/sway/lid-handler.py
 exec swaync
 
 output eDP-1 scale 2
+output DP-2 scale 1
+output DP-2 pos -1280 1440
 output DP-1 pos 0 0
-output DP-2 pos 0 0
 output eDP-1 pos 640 1440
-output HDMI-A-1 mode 2560x1440@60Hz
-output HDMI-A-1 pos 0 0
+#output HDMI-A-1 mode 2560x1440@60Hz
+#output HDMI-A-1 pos 0 0
 output eDP-1 mode 2560x1600@120Hz
+
+output DP-2 disable
 
 client.focused          #4c7899 #ffffff88 #000000 #2e9ef4
 client.unfocused        #333333 #22222277 #ffffff #292d3e
@@ -54,17 +57,27 @@ client.placeholder      #000000 #0c0c0c #ffffff #000000
 client.background       #ffffff
 
 bindsym $mod+Shift+M exec swaylock -c 000000
-bindsym $mod+Shift+n exec bash -c "shopt -s expand_aliases && source ~/alias/.env && eval n"
-bindsym $mod+Shift+x exec bash -c "shopt -s expand_aliases && source ~/alias/.env && eval d"
-bindsym $mod+x exec killall -s 9 wallpaperengine
-bindsym $mod+Shift+a exec bash -c "shopt -s expand_aliases && source ~/alias/.env && eval al"
-bindsym $mod+Shift+d exec bash -c "shopt -s expand_aliases && source ~/alias/.env && eval dn"
+bindsym $mod+Shift+x exec bash -c "shopt -s expand_aliases && source ~/alias/.env && eval d && killall -s 9 mpv"
+bindsym $mod+x exec bash -c "killall -s 9 wallpaperengine ; killall -s 9 mpv"
+bindsym $mod+Shift+a exec bash -c "shopt -s expand_aliases && source ~/alias/.env && eval al && killall -s 9 mpv"
+bindsym $mod+Shift+d exec bash -c "shopt -s expand_aliases && source ~/alias/.env && eval dn && killall -s 9 mpv"
 bindsym $mod+Shift+v exec bash -c "shopt -s expand_aliases && source ~/alias/.env && eval vc"
 bindsym $mod+Shift+s exec swaync-client -t -sw
 
 #group change
 bindsym $mod+Ctrl+h focus parent, focus left, focus child
 bindsym $mod+Ctrl+l focus parent, focus right, focus child
+
+
+#window resize
+bindsym $mod+Ctrl+Shift+i floating enable, resize set width 50 ppt height 50 ppt, move position 0 ppt 0 ppt
+bindsym $mod+Ctrl+Shift+o floating enable, resize set width 50 ppt height 50 ppt, move position 50 ppt 0 ppt
+bindsym $mod+Ctrl+Shift+k floating enable, resize set width 50 ppt height 50 ppt, move position 0 ppt 50 ppt
+bindsym $mod+Ctrl+Shift+l floating enable, resize set width 50 ppt height 50 ppt, move position 50 ppt 50 ppt
+bindsym $mod+Ctrl+Shift+semicolon floating enable, resize set width 30 ppt height 40 ppt, move position 70 ppt 0 ppt
+
+exec insync start
+exec mega-sync
 EOF
 
     # sway lid event control
