@@ -170,6 +170,15 @@ if [ ! -d '~/.config/mako' ]; then
 EOF
 fi
 
+if [ ! -d '~/.config/mpv' ]; then
+    cat > ~/.config/mpv/config << EOF
+keepaspect-window=no
+keepaspect=yes
+video-unscaled=no
+panscan=0
+EOF
+fi
+
 # waybar config
 if [ ! -d '~/.config/waybar' ]; then
     cat > ~/.config/waybar/config << EOF
