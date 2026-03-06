@@ -1,0 +1,109 @@
+enable-normalization-flatten-containers = false
+enable-normalization-opposite-orientation-for-nested-containers = false
+
+[mode.main.binding]
+alt-s = 'layout v_accordion'
+alt-w = 'layout h_accordion'
+alt-e = 'layout tiles'
+alt-f = 'layout floating'
+
+alt-h = "focus left"
+alt-j = "focus down"
+alt-k = "focus up"
+alt-l = "focus right"
+alt-shift-h = "move left"
+alt-shift-j = "move down"
+alt-shift-k = "move up"
+alt-shift-l = "move right"
+
+alt-shift-space = "layout floating tiling"
+
+alt-v = "split vertical"
+alt-b = "split horizontal"
+
+alt-shift-f = "flatten-workspace-tree"
+
+# 1사분면 (오른쪽 위)으로 floating 윈도우 이동 + 리사이즈
+alt-ctrl-i = '''exec-and-forget osascript -e '
+tell application "System Events"
+    set frontApp to name of first application process whose frontmost is true
+end tell
+tell application frontApp
+    tell application "Finder" to set {0, 0, screenW, screenH} to bounds of window of desktop
+    set halfW to screenW / 2
+    set halfH to screenH / 2
+    set bounds of window 1 to {halfW, 0, screenW, halfH}
+end tell'
+'''
+
+# 2사분면 (왼쪽 위)으로 floating 윈도우 이동 + 리사이즈
+alt-ctrl-u = '''exec-and-forget osascript -e '
+tell application "System Events"
+    set frontApp to name of first application process whose frontmost is true
+end tell
+tell application frontApp
+    tell application "Finder" to set {0, 0, screenW, screenH} to bounds of window of desktop
+    set halfW to screenW / 2
+    set halfH to screenH / 2
+    set bounds of window 1 to {0, 0, halfW, halfH}
+end tell'
+'''
+
+# 3사분면 (왼쪽 아래)으로 floating 윈도우 이동 + 리사이즈
+alt-ctrl-j = '''exec-and-forget osascript -e '
+tell application "System Events"
+    set frontApp to name of first application process whose frontmost is true
+end tell
+tell application frontApp
+    tell application "Finder" to set {0, 0, screenW, screenH} to bounds of window of desktop
+    set halfW to screenW / 2
+    set halfH to screenH / 2
+    set bounds of window 1 to {0, halfH, halfW, screenH}
+end tell'
+'''
+
+# 4사분면 (오른쪽 아래)으로 floating 윈도우 이동 + 리사이즈
+alt-ctrl-k = '''exec-and-forget osascript -e '
+tell application "System Events"
+    set frontApp to name of first application process whose frontmost is true
+end tell
+tell application frontApp
+    tell application "Finder" to set {0, 0, screenW, screenH} to bounds of window of desktop
+    set halfW to screenW / 2
+    set halfH to screenH / 2
+    set bounds of window 1 to {halfW, halfH, screenW, screenH}
+end tell'
+'''
+
+# 전체 화면 채우기
+alt-ctrl-f = '''exec-and-forget osascript -e '
+tell application "System Events"
+    set frontApp to name of first application process whose frontmost is true
+end tell
+tell application frontApp
+    tell application "Finder" to set {0, 0, screenW, screenH} to bounds of window of desktop
+    set bounds of window 1 to {0, 0, screenW, screenH}
+end tell'
+'''
+
+# 왼쪽 절반
+alt-ctrl-h = '''exec-and-forget osascript -e '
+tell application "System Events"
+    set frontApp to name of first application process whose frontmost is true
+end tell
+tell application frontApp
+    tell application "Finder" to set {0, 0, screenW, screenH} to bounds of window of desktop
+    set bounds of window 1 to {0, 0, screenW / 2, screenH}
+end tell'
+'''
+
+# 오른쪽 절반
+alt-ctrl-l = '''exec-and-forget osascript -e '
+tell application "System Events"
+    set frontApp to name of first application process whose frontmost is true
+end tell
+tell application frontApp
+    tell application "Finder" to set {0, 0, screenW, screenH} to bounds of window of desktop
+    set bounds of window 1 to {screenW / 2, 0, screenW, screenH}
+end tell'
+'''
