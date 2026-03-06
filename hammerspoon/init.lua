@@ -595,10 +595,17 @@ hs.hotkey.bind({"alt", "shift", "ctrl"}, "i", function() -- 현황 표시
     hs.alert(table.concat(lines, "\n"), 3)
 end)
 
-hs.hotkey.bind({"alt", "shift", "ctrl"}, "r", function() -- 초기화
+hs.hotkey.bind({"alt", "shift", "ctrl"}, "r", function() -- 인식 순서대로 재설정
     MONITOR_MAP = {}
+    local screens = hs.screen.allScreens()
+    local lines = {"󰍹 모니터 매핑 재설정"}
+    for i, screen in ipairs(screens) do
+        MONITOR_MAP[screen:name()] = i
+        table.insert(lines, i .. " | " .. screen:name())
+    end
     saveMap()
-    hs.alert("모니터 매핑 초기화", 2)
+    onAssignComplete()
+    hs.alert(table.concat(lines, "\n"), 3)
 end)
 
 hs.hotkey.bind({"alt", "shift"}, "m", function()
