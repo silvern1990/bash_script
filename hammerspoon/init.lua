@@ -638,7 +638,12 @@ end)
 
 
 ---- 일반 키매핑 ----
-hs.hotkey.bind({"alt"}, "return", function()
-    hs.applescript('tell application "iTerm" to create window with default profile')
+hs.hotkey.bind({"alt", "ctrl"}, "return", function()
+    local running = hs.application.get("iTerm2")
+    if running then
+        hs.applescript('tell application "iTerm" to create window with default profile')
+    else
+        hs.application.launchOrFocus("iTerm")
+    end
 end)
 
