@@ -123,7 +123,7 @@ registerWsHotkeys = function()
         end
 
         for _, ws in ipairs(workspaces) do
-            local hk = hs.hotkey.bind({"alt"}, ws, function()
+            local hk = hs.hotkey.bind({"alt", "ctrl"}, ws, function()
                 if connected then
                     gotoWorkspace(ws)
                 else
@@ -133,13 +133,13 @@ registerWsHotkeys = function()
             table.insert(wsHotkeys, hk)
 
             -- 윈도우 이동: alt+shift+숫자
-            local moveHk = hs.hotkey.bind({"alt", "shift"}, ws, function()
+            local moveHk = hs.hotkey.bind({"alt", "ctrl", "shift"}, ws, function()
                 if isAssigning then return end -- 부여 모드중엔 무시
                 aerospace("move-node-to-workspace " .. ws)
             end)
             table.insert(wsHotkeys, moveHk)
 
-            local moveWs = hs.hotkey.bind({"alt", "cmd"}, ws, function()
+            local moveWs = hs.hotkey.bind({"alt", "ctrl", "cmd"}, ws, function()
                 moveWorkspaceToMonitor(ws)
             end)
         end
@@ -613,9 +613,10 @@ hs.hotkey.bind({"alt", "shift"}, "m", function()
     hs.alert("마우스 이동: " .. (mouseMoveEnabled and "ON" or "OFF"), 1)
 end)
 
-hs.hotkey.bind({"alt", "ctrl"}, "1", function() focusMonitorByIndex(1) end)
-hs.hotkey.bind({"alt", "ctrl"}, "2", function() focusMonitorByIndex(2) end)
-hs.hotkey.bind({"alt", "ctrl"}, "3", function() focusMonitorByIndex(3) end)
+hs.hotkey.bind({"alt", "ctrl"}, "F1", function() focusMonitorByIndex(1) end)
+hs.hotkey.bind({"alt", "ctrl"}, "F2", function() focusMonitorByIndex(2) end)
+hs.hotkey.bind({"alt", "ctrl"}, "F3", function() focusMonitorByIndex(3) end)
+hs.hotkey.bind({"alt", "ctrl"}, "F4", function() focusMonitorByIndex(4) end)
 
 loadMap()
 hs.timer.doAfter(2, function()
