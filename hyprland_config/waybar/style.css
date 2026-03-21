@@ -93,6 +93,11 @@ window#waybar {
   color: @cp-black;
 }
 
+#window label {
+  min-height: 0;
+  font-size: 13px;
+}
+
 #custom-omarchy {
   background-color: @cp-red;
   color: @cp-dark;
