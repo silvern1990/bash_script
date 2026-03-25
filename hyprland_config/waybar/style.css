@@ -52,7 +52,7 @@ window#waybar {
 /* MODULE BASE STYLE */
 /* ============================= */
 
-#tray, #window, #mpris, #cpu, #clock, #battery, #network, 
+#tray, #window, #mpris, #cpu, #clock, #battery, #network, #temperature,
 #memory, #backlight, #bluetooth, #pulseaudio, #custom-weather, 
 #custom-update, #idle_inhibitor, #custom-omarchy, #custom-voxtype,
 #custom-updatespacman {
@@ -117,7 +117,7 @@ window#waybar {
 }
 
 /* System Stats */
-#battery {
+#battery, #temperature {
   background-color: @cp-green;
   color: @cp-black;
 }
@@ -151,7 +151,7 @@ window#waybar {
 /* HOVER EFFECTS */
 /* ============================= */
 
-#clock:hover, #cpu:hover, #memory:hover, #battery:hover, #network:hover, #pulseaudio:hover {
+#clock:hover, #cpu:hover, #memory:hover, #battery:hover, #network:hover, #pulseaudio:hover, #temperature:hover {
   background-color: @cp-cream;
   color: @cp-black;
 }
@@ -160,7 +160,7 @@ window#waybar {
 /* WARNINGS & CRITICAL */
 /* ============================= */
 
-#cpu.critical, #memory.critical, #battery.critical {
+#cpu.critical, #memory.critical, #battery.critical, #temperature.critical {
   background-color: @cp-red;
   color: @cp-cream;
   animation: blink-warning 0.5s linear infinite alternate;
