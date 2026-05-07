@@ -29,6 +29,7 @@
 
   "modules-right": [
     "tray",
+    "custom/tasks",
     "cpu",
     "memory",
     "temperature",
@@ -219,6 +220,21 @@
   "memory": {
     "format": "{}% "
   },
+  "custom/tasks": {
+    "exec": "~/.config/waybar/scripts/taskwarrior.sh status",
+    "return-type": "json",
+    "interval": 30,
+    "signal": 11,
+    "format": "{icon} {}",
+    "format-icons": {
+      "has-tasks": "󰄗",
+      "empty": "󰄬"
+    },
+    "on-click": "~/.config/waybar/scripts/taskwarrior.sh menu",
+    "on-click-right": "~/.config/waybar/scripts/taskwarrior.sh add",
+    "tooltip": true
+  },
+
   "custom/mpv": {
     "exec": "~/.config/waybar/scripts/mpv-listener.sh",
     "return-type": "json",
