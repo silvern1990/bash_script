@@ -2,7 +2,7 @@
 
 active=$(hyprctl activewindow -j | jq -r '.class')
 
-if [[ "$active" == "google-chrome" ]]; then
+if [[ "$active" == "google-chrome" || "$active" == "kitty" ]]; then
     if [[ "$1" == "prev"  ]]; then
         wtype -M ctrl -M shift -k Tab -m shift -m ctrl
     elif [[ "$1" == "next" ]]; then
