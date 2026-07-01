@@ -118,12 +118,21 @@ source $ZSH/oh-my-zsh.sh
 
 source .zshrc_my
 
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 
-bindkey '^[[1;2D' insert-cycledleft
-bindkey '^[[1;2C' insert-cycledright
-bindkey '^[[1;2A' insert-cycledup
-bindkey '^[[1;2B' insert-cycleddown
+bindkey '^[[1;3D' insert-cycledleft
+bindkey '^[[1;3C' insert-cycledright
+bindkey '^[[1;3A' insert-cycledup
+bindkey '^[[1;3B' insert-cycleddown
 
-source '/opt/homebrew/opt/autoenv/activate.sh'
+bindkey -M vicmd 'k' up-line-or-beginning-search
+bindkey -M vicmd 'j' down-line-or-beginning-search
+
+eval "$(direnv hook zsh)"
+
+#source '/opt/homebrew/opt/autoenv/activate.sh'
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
