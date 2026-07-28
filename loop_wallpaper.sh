@@ -10,8 +10,8 @@ fi
 echo $$ > /tmp/check_wallpaper.pid
 
 DB_NAME="/home/zero/wallpaper.db"
-wallpaper_dir=/home/zero/.sync/wallpaper
-wallpaper_engine=wallpaperengine
+wallpaper_dir=/home/zero/.sync/temp
+wallpaper_engine=/opt/linux-wallpaperengine/linux-wallpaperengine
 
 
 if [ ! -f "$DB_NAME" ]; then
@@ -80,7 +80,7 @@ alias al='[ -f /tmp/check_gid ] && ([ -e ~/.sync/wallpaper/allow/\$(cat /tmp/che
 
 alias dn='[ -f /tmp/check_gid ] && ([ -e ~/.sync/wallpaper/deny/\$(cat /tmp/check_gid) ] && rm -rf ${wallpaper_dir}/\$(cat /tmp/check_gid)) || mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/deny/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid) && echo \$(cat /tmp/check_gid) > /tmp/prev_gid'
 
-alias vc='mpv --volume=60 --fullscreen ${wallpaper_dir}/\$(cat /tmp/check_gid)/*.mp4'
+alias vc='mpv --volume=60 ${wallpaper_dir}/\$(cat /tmp/check_gid)/*.mp4'
 
 EOF
 
@@ -96,7 +96,7 @@ perform_task(){
             exit 1
         fi
 
-        command="$wallpaper_engine --screen-root $1 --bg ${wallpaper_dir}/$gid --scaling fill --no-fullscreen-pause --volume 60 --fps 60"
+        command="$wallpaper_engine --screen-root $1 --bg ${wallpaper_dir}/$gid --scaling fit --clamp border --volume 60 --fps 60 --disable-parallax"
 
         $command &
 
