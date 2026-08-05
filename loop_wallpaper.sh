@@ -2,6 +2,8 @@
 
 echo "1" > /tmp/check_gid
 
+mkdir /tmp/deleted
+
 if [ -z $1 ]; then
     echo "USAGE: display-port"
     exit 1
@@ -64,7 +66,7 @@ fi
 cat > ~/alias/.env << EOF
 
 alias d='[ -f /tmp/check_gid ] && {
-    rm -rf "${wallpaper_dir}/\$(cat /tmp/check_gid)" &&
+    mv "${wallpaper_dir}/\$(cat /tmp/check_gid)" /tmp/deleted &&
     sqlite3 "$DB_NAME" "delete from gid_list where gid=\$(cat /tmp/check_gid);" && 
     kill -USR1 "\$(cat /tmp/check_wallpaper.pid)" &&
     echo "\$(cat /tmp/check_gid)" > /tmp/prev_gid
@@ -130,6 +132,7 @@ handle_signal() {
 
 trap 'handle_signal' SIGUSR1
 
+
 INTERVAL=120000
 restart_task=0
 
@@ -146,6 +149,7 @@ while true; do
 
         sleep 1
     done
+
     kill $(cat /tmp/galary.pid)
 done
 
