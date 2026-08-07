@@ -3,7 +3,7 @@
 
 FILES=$(find /home/zero/background -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.webp" \))
 
-ID=$(($(ls ~/.sync/wallpaper/deny ~/.sync/wallpaper/allow ~/.sync/wallpaper/normal | sort -rn | head -n 1)+1))
+ID=$(($(ls ~/.sync/wallpaper/deny ~/.sync/wallpaper/allow ~/.sync/wallpaper/normal ~/.sync/temp | sort -rn | head -n 1)+1))
 for file in $FILES
 do
     name=$(basename "$file")
