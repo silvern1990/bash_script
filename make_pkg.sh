@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 
-FILES=$(find /home/zero/background -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.webp" \))
+FILES=$(find /home/zero/background -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.webp" \) | sort)
 
 ID=$(($(ls ~/.sync/wallpaper/deny ~/.sync/wallpaper/allow ~/.sync/wallpaper/normal ~/.sync/temp | sort -rn | head -n 1)+1))
 for file in $FILES
