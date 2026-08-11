@@ -2,6 +2,7 @@
 
 echo "1" > /tmp/check_gid
 
+rm -rf /tmp/deleted
 mkdir /tmp/deleted
 
 if [ -z $1 ]; then
@@ -133,7 +134,7 @@ handle_signal() {
 trap 'handle_signal' SIGUSR1
 
 
-INTERVAL=120000
+INTERVAL=1200000
 restart_task=0
 
 while true; do
