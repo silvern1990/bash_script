@@ -2,8 +2,8 @@
 
 echo "1" > /tmp/check_gid
 
-rm -rf /tmp/deleted
-mkdir /tmp/deleted
+rm -rf /home/zero/deleted
+mkdir /home/zero/deleted
 
 if [ -z $1 ]; then
     echo "USAGE: display-port"
@@ -67,7 +67,7 @@ fi
 cat > ~/alias/.env << EOF
 
 alias d='[ -f /tmp/check_gid ] && {
-    mv "${wallpaper_dir}/\$(cat /tmp/check_gid)" /tmp/deleted &&
+    mv "${wallpaper_dir}/\$(cat /tmp/check_gid)" /home/zero/deleted &&
     sqlite3 "$DB_NAME" "delete from gid_list where gid=\$(cat /tmp/check_gid);" && 
     kill -USR1 "\$(cat /tmp/check_wallpaper.pid)" &&
     echo "\$(cat /tmp/check_gid)" > /tmp/prev_gid
