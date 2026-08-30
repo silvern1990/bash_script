@@ -1,0 +1,3 @@
+alias preview='mpv ~/.sync/temp/$(cat /tmp/check_gid)/preview*'
+alias unpack='rm -rf /tmp/unpack ; python3 ~/git/python/unpack.py "$HOME/.sync/temp/$(cat /tmp/check_gid)/scene.pkg" /tmp/unpack && find /tmp/unpack -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.webp" -o -name "*.webm" \) ! -name "*mip*" -exec mv -v --backup=numbered -t ~/background {} +'
+
