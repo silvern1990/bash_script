@@ -1,3 +1,6 @@
 alias preview='mpv ~/.sync/temp/$(cat /tmp/check_gid)/preview*'
+
 alias unpack='rm -rf /tmp/unpack ; python3 ~/git/python/unpack.py "$HOME/.sync/temp/$(cat /tmp/check_gid)/scene.pkg" /tmp/unpack && find /tmp/unpack -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.webp" -o -name "*.webm" \) ! -name "*mip*" -exec mv -v --backup=numbered -t ~/background {} +'
+
+alias unpack_bg='zsh ~/git/bash_script/make_pkg.sh && [[ $(find ~/background -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.webp" -o -name "*.webm" \) | wc -l) -eq $(ls -1 ~/temp | wc -l) ]] && [[ -z "$(comm -12 <(find ~/.sync/wallpaper -mindepth 2 -maxdepth 2 -type d -regex ".*/[0-9]+" -printf "%f\n" | sort) <(find ~/temp -mindepth 1 -maxdepth 1 -type d -regex ".*/[0-9]+" -printf "%f\n" | sort))" ]] && { mv ~/temp/*(N) ~/.sync/temp && rm -rf ~/background/*(N) }'
 
