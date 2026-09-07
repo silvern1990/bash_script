@@ -1,10 +1,10 @@
 #!/bin/zsh
 
 
-FILES=$(find /home/zero/background -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.webp" -o -name "*.webm" \) | sort)
+FILES=("${(@f)$(find /home/zero/background -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.webp" -o -name "*.webm" \) | sort)}")
 
 ID=$(($(ls ~/.sync/wallpaper/deny ~/.sync/wallpaper/allow ~/.sync/wallpaper/normal ~/.sync/temp | sort -rn | head -n 1)+1))
-for file in $FILES
+for file in "${FILES[@]}"
 do
     name=$(basename "$file")
     name="${name%.jpg}"
