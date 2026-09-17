@@ -83,7 +83,7 @@ alias al='[ -f /tmp/check_gid ] && ([ -e ~/.sync/wallpaper/allow/\$(cat /tmp/che
 
 alias dn='[ -f /tmp/check_gid ] && ([ -e ~/.sync/wallpaper/deny/\$(cat /tmp/check_gid) ] && rm -rf ${wallpaper_dir}/\$(cat /tmp/check_gid)) || mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/deny/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid) && echo \$(cat /tmp/check_gid) > /tmp/prev_gid'
 
-alias vc='mpv --volume=60 ${wallpaper_dir}/\$(cat /tmp/check_gid)/*.mp4'
+alias vc='mpv --fullscreen --volume=60 ${wallpaper_dir}/\$(cat /tmp/check_gid)/*.mp4'
 
 EOF
 

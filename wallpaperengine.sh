@@ -1,93 +1,145 @@
-#!/bin/sh
+#!/bin/bash
 
-echo $$ > /tmp/wallpaper.pid
-echo "1" > /tmp/gid.txt
+echo "1" > /tmp/check_gid
 
-pid=""
+if [ -z $1 ]; then
+    echo "USAGE: display-port"
+    exit 1
+fi
 
-wallpaper_dir="/home/zero/.sync/wallpaper"
-kind="deny"
+echo $$ > /tmp/check_wallpaper.pid
+
+DB_NAME="/home/zero/wallpaper.db"
+wallpaper_dir=/home/zero/.sync/wallpaper/deny
+wallpaper_engine=/opt/linux-wallpaperengine/linux-wallpaperengine
 
 
-INTERVAL=600
+if [ ! -f "$DB_NAME" ]; then
 
-perform_task() {
-    gid="$(ls ~/.sync/wallpaper/$kind | sort -R | head -n1)"
+sqlite3 $DB_NAME << EOF
 
-    ls ${wallpaper_dir}/${kind}/${gid}/*.mp4
+CREATE TABLE IF NOT EXISTS gid_list (
+    gid TEXT PRIMARY KEY,
+    title TEXT,
+    resolution TEXT,
+    play_time int
+);
+
+EOF
+
+
+for gid in ${wallpaper_dir}/*; do
+    title=$(cat ${gid}/project.json | jq '.title')
+    title="${title//\'/\'\'}"
+
+
+    resolution=""
+    play_time=0
+
+    ls ${gid}/*.mp4
     if [ $? -eq 0 ]; then
-        PLAY_TIME=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 ${wallpaper_dir}/${kind}/${gid}/*.mp4)
-        INTERVAL=$(awk "BEGIN {printf(\"%.0f\", $PLAY_TIME)}")
-    else
-        INTERVAL=600
+        resolution=$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 ${gid}/*.mp4)
+        play_time=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 ${gid}/*.mp4)
+
+        echo $resolution
+        echo $play_time
     fi
 
-    if [ $INTERVAL -lt 600 ]; then
-        INTERVAL=600
-    fi
+    gid=$(basename $gid)
 
-    for display in "$@"; do
-        command="wallpaperengine --screen-root $display --bg /home/zero/.sync/wallpaper/$kind/$gid --scaling fit --volume 100"
-        # command="wallpaperengine /home/zero/.sync/wallpaper/$kind/$gid --volume 100"
-        $command >> /dev/null &
-        pid+="${!} "
-    done
+    case "$gid" in
+        '' | *[!0-9]*)
+            echo "$gid"
+            ;;
+        *)
+            sqlite3 $DB_NAME "INSERT INTO gid_list (gid, title, resolution, play_time) VALUES ('$gid', '$title', '$resolution', $play_time);"
+            ;;
+    esac
+
+done
+
+fi
 
 
-    echo "$gid" > /tmp/gid.txt
+cat > ~/alias/.env << EOF
+
+alias d='[ -f /tmp/check_gid ] && {
+    rm -rf "${wallpaper_dir}/\$(cat /tmp/check_gid)" &&
+    sqlite3 "$DB_NAME" "delete from gid_list where gid=\$(cat /tmp/check_gid);" && 
+    kill -USR1 "\$(cat /tmp/check_wallpaper.pid)" &&
+    echo "\$(cat /tmp/check_gid)" > /tmp/prev_gid
+}'
+
+alias n='[ -f /tmp/check_gid ] && {
+    sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)
+}'
+
+alias normal='[ -f /tmp/check_gid ] && {([ -e ~/.sync/wallpaper/normal/\$(cat /tmp/check_gid) ] && rm -rf ${wallpaper_dir}/\$(cat /tmp/check_gid)) || mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/normal/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid)}'
+
+alias al='[ -f /tmp/check_gid ] && ([ -e ~/.sync/wallpaper/allow/\$(cat /tmp/check_gid) ] && rm -rf ${wallpaper_dir}/\$(cat /tmp/check_gid)) || mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/allow/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid) && echo \$(cat /tmp/check_gid) > /tmp/prev_gid'
+
+alias dn='[ -f /tmp/check_gid ] && ([ -e ~/.sync/wallpaper/deny/\$(cat /tmp/check_gid) ] && rm -rf ${wallpaper_dir}/\$(cat /tmp/check_gid)) || mv ${wallpaper_dir}/\$(cat /tmp/check_gid) ~/.sync/wallpaper/deny/\$(cat /tmp/check_gid) && sqlite3 $DB_NAME "delete from gid_list where gid=\$(cat /tmp/check_gid)" && kill -USR1 \$(cat /tmp/check_wallpaper.pid) && echo \$(cat /tmp/check_gid) > /tmp/prev_gid'
+
+alias vc='mpv --volume=60 --fullscreen ${wallpaper_dir}/\$(cat /tmp/check_gid)/*.mp4'
+
+EOF
+
+perform_task(){
+    (
+
+        gid=$(ls $wallpaper_dir | sort --random-sort | head -n1)
+
+        command="$wallpaper_engine --screen-root $1 --bg ${wallpaper_dir}/$gid --scaling fit --no-fullscreen-pause --volume 60 --fps 60"
+
+        $command &
+
+        pid=$!
+
+        echo "$pid" > /tmp/galary.pid
+
+        echo "$gid" > /tmp/check_gid
+
+        wait $pid
+
+        # if [ "$?" != 0  -a "$?" != 143 ]; then
+        #     if [ -e "$HOME/.sync/wallpaper/error/$gid" ]; then
+        #         rm -rf "${wallpaper_dir:?}/$gid"
+        #     else
+        #         mv "${wallpaper_dir:?}/$gid" "$HOME/.sync/wallpaper/error/$gid"
+        #     fi
+        #
+        #     sqlite3 "$DB_NAME" "delete from gid_list where gid=$gid"
+        #
+        #     kill -USR1 $$
+        # fi
+
+    ) &
 }
 
 handle_signal() {
-    for id in $pid; do
-        echo $pid
-    done
-
-    for id in $pid; do
-        kill $pid
-    done
-
-    pid=""
-
+    killall -s 9 wallpaperengine
     restart_task=1
 }
 
 trap 'handle_signal' SIGUSR1
 
+INTERVAL=200
 restart_task=0
 
-
-cat > ~/alias/.env << EOF
-alias n='kill -USR1 \$(cat /tmp/wallpaper.pid)'
-alias d='rm -rf ${wallpaper_dir}/${kind}/\$(cat /tmp/gid.txt) && kill -USR1 \$(cat /tmp/wallpaper.pid)'
-alias error='mv ${wallpaper_dir}/${kind}/\$(cat /tmp/gid.txt) ${wallpaper_dir}/error/\$(cat /tmp/gid.txt) && kill -USR1 \$(cat /tmp/wallpaper.pid)'
-alias normal='mv ${wallpaper_dir}/${kind}/\$(cat /tmp/gid.txt) ${wallpaper_dir}/normal/\$(cat /tmp/gid.txt) && kill -USR1 \$(cat /tmp/wallpaper.pid)'
-alias al='mv ${wallpaper_dir}/${kind}/\$(cat /tmp/gid.txt) ${wallpaper_dir}/allow/\$(cat /tmp/gid.txt) && kill -USR1 \$(cat /tmp/wallpaper.pid)'
-alias dn='mv ${wallpaper_dir}/${kind}/\$(cat /tmp/gid.txt) ${wallpaper_dir}/deny/\$(cat /tmp/gid.txt) && kill -USR1 \$(cat /tmp/wallpaper.pid)'
-alias vc='mpv --volume=100 --fullscreen \$(cat /tmp/gid.txt)/*.mp4'
-EOF
-
 while true; do
-    perform_task $@
+    perform_task $1
 
-    SECONDS=0.0
-
-
+    SECONDS=0
     while [ $SECONDS -lt $INTERVAL ]; do
+
         if [ "$restart_task" -eq 1 ]; then
             restart_task=0
             break
         fi
-        if [ "$?" != 0 ]; then
-            break
-        fi
+
         sleep 1
     done
-
-    for id in $pid; do
-        kill $pid
-    done
-
-    pid=""
+    kill $(cat /tmp/galary.pid)
 done
 
-
+tput cnorm
