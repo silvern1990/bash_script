@@ -2,5 +2,44 @@ alias preview='mpv ~/.sync/temp/$(cat /tmp/check_gid)/preview*'
 
 alias unpack='rm -rf /tmp/unpack ; python3 ~/git/python/unpack.py "$HOME/.sync/temp/$(cat /tmp/check_gid)/scene.pkg" /tmp/unpack && find /tmp/unpack -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.webp" -o -name "*.webm" -o -name "*.mp4" \) ! -name "*mip*" -exec mv -v --backup=numbered -t ~/background {} +'
 
-alias unpack_bg='zsh ~/git/bash_script/make_pkg.sh && [[ $(find ~/background -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.webp" -o -name "*.webm" -o -name "*.mp4" \) | wc -l) -eq $(ls -1 ~/temp | wc -l) ]] && [[ -z "$(comm -12 <(find ~/.sync/wallpaper -mindepth 2 -maxdepth 2 -type d -regex ".*/[0-9]+" -printf "%f\n" | sort) <(find ~/temp -mindepth 1 -maxdepth 1 -type d -regex ".*/[0-9]+" -printf "%f\n" | sort))" ]] && { mv ~/temp/*(N) ~/.sync/temp && rm -rf ~/background/*(N) }'
+alias pack_bg='zsh ~/git/bash_script/make_pkg.sh && [[ $(find ~/background -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.webp" -o -name "*.webm" -o -name "*.mp4" \) | wc -l) -eq $(ls -1 ~/temp | wc -l) ]] && [[ -z "$(comm -12 <(find ~/.sync/wallpaper -mindepth 2 -maxdepth 2 -type d -regex ".*/[0-9]+" -printf "%f\n" | sort) <(find ~/temp -mindepth 1 -maxdepth 1 -type d -regex ".*/[0-9]+" -printf "%f\n" | sort))" ]] && { mv ~/temp/*(N) ~/.sync/temp && rm -rf ~/background/*(N) }'
 
+
+unpack_one() {
+
+    local allowed=~/background
+
+    if [[ ${PWD:A} != ${allowed:A} ]]; then
+        print -u2 "unpack_one: ${allowed}에서만 실행할 수 있습니다 (현재: $PWD)"
+        return 1
+    fi
+
+    find . -maxdepth 1 -type f -printf '%s\t%p\0' \
+    | sort -z -t $'\t' -k1,1nr -k2,2 \
+    | tail -z -n +2 \
+    | cut -z -f2- \
+    | xargs -0 -r rm -v --
+}
+
+rename_zip() {
+    # 함수 안에서만 zsh 기본 옵션으로 초기화
+    emulate -L zsh
+
+    [[ ${1:-0} == <-> ]] || { print -u2 "rename_zip: 시작 번호는 정수여야 합니다: ${(q)1}"; return 1 }
+
+    local -i n=${1:-0}
+    local file ext target
+
+    for file in *(N.); do
+        ext=${file:e}
+        target=${(l:4::0:)n}${ext:+.$ext}
+        [[ $file == $target ]] && { n+=1; continue }
+        if [[ -e $target ]]; then
+            print -u2 "rename_zip: $target 이(가) 이미 있어 중단합니다 ($file)"
+            return 1
+        fi
+        mv -v -- "$file" "$target" || return $n
+        n+=1
+    done
+    return $n
+}
