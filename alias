@@ -25,7 +25,7 @@ rename_zip() {
     # 함수 안에서만 zsh 기본 옵션으로 초기화
     emulate -L zsh
 
-    [[ ${1:-0} == <-> ]] || { print -u2 "rename_zip: 시작 번호는 정수여야 합니다: ${(q)1}"; return 1 }
+    [[ ${1:-0} == <-> ]] || { print -u2 "rename_zip: 시작 번호는 정수여야함: ${(q)1}"; return 1 }
 
     local -i n=${1:-0}
     local file ext target
@@ -35,7 +35,7 @@ rename_zip() {
         target=${(l:4::0:)n}${ext:+.$ext}
         [[ $file == $target ]] && { n+=1; continue }
         if [[ -e $target ]]; then
-            print -u2 "rename_zip: $target 이(가) 이미 있어 중단합니다 ($file)"
+            print -u2 "rename_zip: $target 이미 존재함..! ($file)"
             return 1
         fi
         mv -v -- "$file" "$target" || return $n
