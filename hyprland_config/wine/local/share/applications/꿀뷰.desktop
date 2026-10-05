@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=꿀뷰
+Exec=/home/zero/.local/share/applications/wine/Programs/꿀뷰/launch-honeyview.sh %f
+Type=Application
+StartupNotify=true
+Path=/home/zero/.wine/drive_c/ProgramData/Microsoft/Windows/Start Menu/Programs/꿀뷰
+Icon=ABB7_Honeyview.0
+StartupWMClass=honeyview.exe
+MimeType=application/zip;
