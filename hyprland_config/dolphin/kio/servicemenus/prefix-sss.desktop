@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Service
+MimeType=application/octet-stream;
+Actions=prefixJ;
+
+[Desktop Action prefixJ]
+Name=Add [SSS] Prefix
+Icon=edit-rename
+Exec=/home/zero/.local/bin/dolphin-prefix-sss.sh %F

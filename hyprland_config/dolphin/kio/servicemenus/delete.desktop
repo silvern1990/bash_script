@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Service
+MimeType=application/octet-stream;
+Actions=delete;
+
+[Desktop Action delete]
+Name=Delete File
+Icon=edit-rename
+Exec=/home/zero/.local/bin/dolphin-delete.sh %F
