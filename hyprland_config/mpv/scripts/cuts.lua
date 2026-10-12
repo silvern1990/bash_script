@@ -2,6 +2,8 @@ local mp = require 'mp'
 
 cut_list = {}
 
+bd_cut_path = "/home/zero/.sync/bdcut"
+
 local function get_file_name(path)
     local file_name = string.match(path, "[^/]+$")
     return file_name
@@ -27,15 +29,45 @@ local function make_cut_info()
     return cut_info_path
 end
 
-local function run_smartcut()
+local function get_save_name(file_name)
+    local base_name = file_name:match("(.+)%..+$")
+    local ext = file_name:match("^.+(%.[^%.]+)$")
+
+    local file_path = bd_cut_path .. "/" .. file_name
+
+    local suffix = 1
+    local f = io.open(file_path, "r")
+    while f do
+        f.close()
+
+        file_path = bd_cut_path .. "/" .. base_name .. "_" .. suffix .. ext
+        f = io.open(file_path, "r")
+    end
+
+    return file_path
+end
+
+local function delete_file()
+    local success, err = os.remove(mp.get_property("path"))
+
+    if success then
+        mp.osd_message("파일이 삭제되었습니다.", 5)
+    else
+        mp.osd_message("삭제 실패: " .. tostring(err))
+    end
+end
+
+local function run_smartcut(cut_info_path)
     local file_path = mp.get_property("path")
     local file_name = get_file_name(file_path)
 
-    local handle = io.popen("python3 ~/git/python/smartcut.py -v " .. file_path .. " /tmp/cuts.txt " .. "~/.sync/bdcut/" .. file_name)
+    local output_path = get_save_name(file_name)
 
+    local handle = io.popen("python3 ~/git/python/smartcut.py -v " .. file_path .. " " .. cut_info_path .. " " .. output_path)
+
+    local result = ""
     if handle then
-        local result = handle:read("*a")
-
+        result = handle:read("*a")
         handle.close()
     end
     return result
@@ -92,20 +124,108 @@ mp.add_key_binding("Ctrl+d", "removelastcut", function()
 end)
 
 
-mp.add_key_binding("Shift+s", "runbdcut", function()
+mp.add_key_binding("Ctrl+Shift+s", "runbdcut", function()
     local cut_info_path = make_cut_info()
 
-    if not file_exists(cut_info_path) then
-        local log = run_smartcut()
 
-        mp.command_native_async({
-            name = "subprocess",
-            args = {
-                "zenity",
-                "--info",
-                "--title=mpv",
-                "--text=" .. log 
-            }
-        }, function() end)
+    if file_exists(cut_info_path) then
+
+        local log = run_smartcut(cut_info_path)
+
+        if log then
+            mp.command_native_async({
+                name = "subprocess",
+                args = {
+                    "zenity",
+                    "--info",
+                    "--title=mpv",
+                    "--text=" .. log 
+                }
+            }, function() end)
+        end
+    end
+
+end)
+
+mp.add_key_binding("Ctrl+Tab", "printstatus", function()
+    cut_status()
+end)
+
+mp.add_key_binding("Ctrl+Shift+d", "deletefile", function()
+    delete_file()
+end)
+
+mp.add_key_binding("Alt+1", "delete1", function()
+    if cut_list[1] then
+        table.remove(cut_list, 2)
+        table.remove(cut_list, 1)
+    end
+end)
+
+
+mp.add_key_binding("Alt+2", "delete2", function()
+    if cut_list[3] then
+        table.remove(cut_list, 4)
+        table.remove(cut_list, 3)
+    end
+end)
+
+
+mp.add_key_binding("Alt+3", "delete3", function()
+    if cut_list[5] then
+        table.remove(cut_list, 6)
+        table.remove(cut_list, 5)
+    end
+end)
+
+
+
+mp.add_key_binding("Alt+4", "delete4", function()
+    if cut_list[7] then
+        table.remove(cut_list, 8)
+        table.remove(cut_list, 7)
+    end
+end)
+
+
+mp.add_key_binding("Alt+5", "delete5", function()
+    if cut_list[9] then
+        table.remove(cut_list, 10)
+        table.remove(cut_list, 9)
+    end
+end)
+
+mp.add_key_binding("Alt+6", "delete6", function()
+    if cut_list[11] then
+        table.remove(cut_list, 12)
+        table.remove(cut_list, 11)
+    end
+end)
+
+mp.add_key_binding("Alt+7", "delete7", function()
+    if cut_list[13] then
+        table.remove(cut_list, 14)
+        table.remove(cut_list, 13)
+    end
+end)
+
+mp.add_key_binding("Alt+8", "delete8", function()
+    if cut_list[15] then
+        table.remove(cut_list, 16)
+        table.remove(cut_list, 15)
+    end
+end)
+
+mp.add_key_binding("Alt+9", "delete9", function()
+    if cut_list[17] then
+        table.remove(cut_list, 18)
+        table.remove(cut_list, 17)
+    end
+end)
+
+mp.add_key_binding("Alt+0", "delete0", function()
+    if cut_list[19] then
+        table.remove(cut_list, 20)
+        table.remove(cut_list, 19)
     end
 end)
