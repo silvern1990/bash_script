@@ -147,7 +147,7 @@ mp.add_key_binding("Ctrl+Shift+s", "runbdcut", function()
 
 end)
 
-mp.add_key_binding("Ctrl+Tab", "printstatus", function()
+mp.add_key_binding("Tab", "printstatus", function()
     cut_status()
 end)
 
