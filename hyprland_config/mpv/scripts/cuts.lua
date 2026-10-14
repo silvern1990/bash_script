@@ -38,9 +38,10 @@ local function get_save_name(file_name)
     local suffix = 1
     local f = io.open(file_path, "r")
     while f do
-        f.close()
+        f:close()
 
         file_path = bd_cut_path .. "/" .. base_name .. "_" .. suffix .. ext
+        suffix = suffix + 1
         f = io.open(file_path, "r")
     end
 
@@ -68,7 +69,7 @@ local function run_smartcut(cut_info_path)
     local result = ""
     if handle then
         result = handle:read("*a")
-        handle.close()
+        handle:close()
     end
     return result
 end
