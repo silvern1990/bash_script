@@ -139,6 +139,7 @@ mp.add_key_binding("Ctrl+Shift+s", "runbdcut", function()
         if log then
             mp.command_native_async({
                 name = "subprocess",
+                playback_only = false,
                 args = {
                     "zenity",
                     "--info",
