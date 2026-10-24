@@ -117,6 +117,9 @@ mp.add_key_binding("Ctrl+s", "cuts", function()
         table.insert(cut_list, pos)
     end
     cut_status()
+
+    make_cut_info()
+
 end)
 
 mp.add_key_binding("Ctrl+d", "removelastcut", function()
